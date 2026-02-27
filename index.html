@@ -1,0 +1,1912 @@
+
+<!DOCTYPE html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Kshitij Drone</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/SplitText.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/TextPlugin.min.js"></script>
+
+    <!-- Model Viewer Component -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+
+    <style>
+      model-viewer {
+        width: 100%;
+
+        height: 100%;
+        --poster-color: transparent;
+        background: transparent !important;
+        border: none !important;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+      .shuffle-text {
+        visibility: hidden;
+        font-family: 'Press Start 2P', sans-serif;
+      }
+
+      .tilt-card {
+        perspective: 800px;
+        transform-style: preserve-3d;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        transform-origin: center;
+        will-change: transform;
+        position: relative;
+      }
+
+      .tilt-card:hover {
+        box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3);
+      }
+
+      .tilt-card .tilt-overlay {
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        transition: background 0.25s ease;
+        pointer-events: none;
+      }
+
+      /* Nike-style hero section */
+      .hero-text {
+        font-family: 'Bebas Neue', sans-serif;
+        line-height: 0.9;
+        font-size: 12vw;
+        letter-spacing: -2px;
+      }
+
+      .line {
+        overflow: hidden;
+      }
+
+      .word {
+        display: inline-block;
+        transform: translateY(100%);
+        opacity: 0;
+        animation: slideUp 0.6s forwards;
+        color: #aaa;
+      }
+
+      .line:nth-child(1) .word {
+        animation-delay: 0.2s;
+      }
+
+      .line:nth-child(2) .word {
+        animation-delay: 0.6s;
+      }
+
+      .line:nth-child(3) .word {
+        animation-delay: 1s;
+      }
+
+      .line:nth-child(4) .word {
+        animation-delay: 1.4s;
+      }
+
+      @keyframes slideUp {
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .rotating-word {
+        color: #fff;
+        transition: opacity 0.3s ease;
+      }
+
+      /* Hero Section Mobile Responsive Styles */
+      @media (max-width: 1024px) {
+        .hero-text {
+          font-size: 8vw;
+          padding: 0 20px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .hero-text {
+          font-size: 10vw;
+          padding: 0 20px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .hero-text {
+          font-size: 10vw;
+          line-height: 1.1;
+          padding: 0 15px;
+        }
+      }
+
+    </style>
+    <script>
+        // Enhanced carousel functionality with responsive behavior
+        document.addEventListener('DOMContentLoaded', () => {
+            const carousel = document.querySelector('[data-carousel]');
+            if (!carousel) return;
+            
+            const slides = carousel.querySelector('[data-slides]');
+            const prevButton = carousel.querySelector('[data-carousel-prev]');
+            const nextButton = carousel.querySelector('[data-carousel-next]');
+            
+            let currentIndex = 0;
+            const totalSlides = slides.children.length;
+            
+            // Get number of visible slides based on screen width
+            function getVisibleSlides() {
+                const width = window.innerWidth;
+                if (width >= 1024) return 3; // Desktop
+                if (width >= 768) return 2;  // Tablet
+                return 1; // Mobile
+            }
+            
+            // Calculate the maximum index based on visible slides
+            function getMaxIndex() {
+                const visibleSlides = getVisibleSlides();
+                return Math.max(0, totalSlides - visibleSlides);
+            }
+            
+            // Update carousel position with smooth transition
+            function updateCarousel() {
+                const itemWidth = slides.children[0].offsetWidth;
+                const gap = 16; // gap-4 = 16px
+                const offset = currentIndex * (itemWidth + gap);
+                slides.style.transform = `translateX(-${offset}px)`;
+            }
+            
+            // Next button handler with looping
+            nextButton.addEventListener('click', () => {
+                const maxIndex = getMaxIndex();
+                if (currentIndex < maxIndex) {
+                    currentIndex++;
+                } else {
+                    currentIndex = 0; // Loop back to start
+                }
+                updateCarousel();
+            });
+            
+            // Previous button handler with looping
+            prevButton.addEventListener('click', () => {
+                const maxIndex = getMaxIndex();
+                if (currentIndex > 0) {
+                    currentIndex--;
+                } else {
+                    currentIndex = maxIndex; // Loop to end
+                }
+                updateCarousel();
+            });
+            
+            // Handle window resize - recalculate and update
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    // Reset to valid index if current index exceeds max after resize
+                    const maxIndex = getMaxIndex();
+                    if (currentIndex > maxIndex) {
+                        currentIndex = maxIndex;
+                    }
+                    updateCarousel();
+                }, 100);
+            });
+            
+            // Initial update
+            updateCarousel();
+        });
+    </script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0d7ff2",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+</script>
+<style>
+  .material-symbols-outlined {
+    font-variation-settings:
+      'FILL' 0,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 24
+  }
+</style>
+<style>
+.dock-outer {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  z-index: 9999;
+}
+
+.dock-panel {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  background: rgba(10, 10, 25, 0.9);
+  border: 1px solid #222;
+  border-radius: 1rem;
+  padding: 0.5rem 1rem;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.dock-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #060010;
+  border: 1px solid #222;
+  border-radius: 10px;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  flex-direction: column;
+}
+
+.dock-item:hover {
+  transform: scale(1.3);
+}
+
+.dock-item:hover .dock-icon {
+  color: #00E0FF;
+}
+
+.dock-icon {
+  color: #fff;
+  font-size: 24px;
+}
+
+.dock-label {
+  position: absolute;
+  top: -1.8rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #060010;
+  color: #fff;
+  border: 1px solid #222;
+  border-radius: 0.375rem;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.dock-item:hover .dock-label {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-3px);
+}
+
+/* Navigation Dock Mobile Responsive Styles */
+@media (max-width: 1024px) {
+  .dock-panel {
+    gap: 0.5rem;
+    padding: 0.4rem 0.8rem;
+  }
+  
+  .dock-item {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .dock-icon {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dock-panel {
+    gap: 0.3rem;
+    padding: 0.3rem 0.6rem;
+  }
+  
+  .dock-item {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .dock-icon {
+    font-size: 20px;
+  }
+  
+  .dock-label {
+    font-size: 0.65rem;
+  }
+}
+
+/* Aurora Background Canvas */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-x: hidden;
+  background: #000;
+}
+
+#aurora-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -10;
+  pointer-events: none;
+}
+
+section,
+header,
+footer,
+.layout-container,
+.bg-background-dark,
+.bg-gray-900,
+.bg-gray-900\/50,
+.bg-background-light {
+  background: transparent !important;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: -5;
+  pointer-events: none;
+}
+
+/* ====== DRONE DESIGN SECTION ====== */
+.drone-design-section {
+  background:#060010;
+  color:#fff;
+  padding:100px 40px;
+  overflow:hidden;
+}
+
+.design-header{text-align:center;margin-bottom:60px;}
+.design-header h2{
+  font-size:2.8rem;font-weight:700;
+  background:linear-gradient(90deg, #00E0FF, #00bcd4);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.design-header p{color:#aaa;font-size:1.1rem;max-width:600px;margin:0 auto}
+
+.bento-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  grid-auto-rows:220px;
+  gap:1rem;
+  max-width:1200px;
+  margin:0 auto;
+}
+
+.bento-card{
+  position:relative;
+  border-radius:20px;
+  overflow:hidden;
+  background:rgba(12,10,20,.8);
+  border:1px solid black;
+  box-shadow:0 0 12px rgba(12,10,20,.8);
+  cursor:pointer;
+  transition:transform .4s ease,box-shadow .4s ease;
+}
+
+.bento-card img{
+  position:absolute;inset:0;
+  width:100%;height:100%;object-fit:cover;
+  opacity:1;transition:opacity .4s ease;
+}
+
+.bento-card:hover img{opacity:1;}
+.bento-card:hover{
+  transform:translateY(-5px)scale(1.02);
+  box-shadow:0 0 25px #00E0FF;
+}
+
+.bento-text{
+  position:relative;z-index:1;
+  height:100%;display:flex;
+  flex-direction:column;justify-content:space-between;
+  padding:20px;
+}
+
+.bento-text h4{font-size:.9rem;color:#bcbcbc;margin-bottom:5px;}
+.bento-text h3{font-size:1.3rem;font-weight:500;margin-bottom:6px;}
+.bento-text p{font-size:.9rem;color:#ccc;line-height:1.4}
+
+.bento-card::before{
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(circle at var(--x,50%) var(--y,50%),rgba(0, 255, 255, .3),transparent 60%);
+  opacity:0;transition:opacity .3s ease;
+}
+
+.bento-card:hover::before{opacity:1;}
+
+.bento-card.motors {
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+}
+
+.bento-card.controller {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+}
+
+.bento-card.camera {
+  grid-column: 3 / 5;
+  grid-row: 1 / 3;
+}
+
+.bento-card.battery {
+  grid-column: 1 / 3;
+  grid-row: 2 / 4;
+}
+
+.bento-card.frame {
+  grid-column: 3 / 4;
+  grid-row: 3 / 4;
+}
+
+.bento-card.comms {
+  grid-column: 4 / 5;
+  grid-row: 3 / 4;
+}
+
+/* Bento Grid Mobile Responsive Styles */
+@media(max-width:1024px){
+  .bento-grid{
+    grid-template-columns:repeat(2,1fr);
+    grid-auto-rows:220px;
+  }
+  .bento-card{
+    grid-column:auto!important;
+    grid-row:auto!important;
+  }
+}
+
+@media(max-width:768px){
+  .bento-grid{
+    grid-template-columns:1fr;
+    grid-auto-rows:200px;
+  }
+  
+  .drone-design-section {
+    padding: 60px 20px;
+  }
+  
+  .design-header h2 {
+    font-size: 2rem;
+  }
+  
+  .design-header p {
+    font-size: 1rem;
+  }
+}
+
+/* Feature Cards Grid Responsive Styles */
+@media (max-width: 768px) {
+  #features .grid {
+    grid-template-columns: repeat(1, 1fr) !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  #features .grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  #features .grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+/* Touch Interaction Alternatives for Mobile */
+@media (hover: none) and (pointer: coarse) {
+  /* Disable tilt effects on touch devices */
+  .tilt-card {
+    perspective: none;
+    transform-style: flat;
+  }
+  
+  .tilt-card:hover {
+    transform: none !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Show expanded card content by default on mobile */
+  .tilt-card .group-hover\/card\:max-h-40 {
+    max-height: 40px !important;
+  }
+  
+  /* Touch-friendly active states */
+  .tilt-card:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+  
+  /* Ensure touch targets are at least 44x44px */
+  .dock-item {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  
+  button, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Disable hover effects on bento cards for touch */
+  .bento-card:hover {
+    transform: none;
+  }
+  
+  .bento-card:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Video Responsive Styles */
+@media (max-width: 768px) {
+  /* Ensure videos maintain aspect ratio on mobile */
+  .tilt-card video,
+  .video-element {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    aspect-ratio: 16/9;
+  }
+  
+  /* Prevent layout shifts during video load */
+  .tilt-card {
+    min-height: 250px;
+  }
+  
+  /* Carousel video adjustments */
+  .slide-video {
+    height: 300px;
+  }
+  
+  .carousel-wrapper {
+    min-height: 600px;
+  }
+  
+  /* Model viewer responsive */
+  .model-viewer-container {
+    height: 400px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tilt-card {
+    min-height: 200px;
+  }
+  
+  .slide-video {
+    height: 250px;
+  }
+  
+  .carousel-wrapper {
+    min-height: 500px;
+    padding: 12px;
+  }
+  
+  .model-viewer-container {
+    height: 300px;
+  }
+  
+  /* Adjust carousel navigation for mobile */
+  .carousel-nav {
+    width: 35px;
+    height: 35px;
+    font-size: 16px;
+  }
+  
+  .carousel-nav.prev {
+    left: 5px;
+  }
+  
+  .carousel-nav.next {
+    right: 5px;
+  }
+}
+
+/* Video background in cards */
+.tilt-card video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+}
+
+/* Ensure content is above video */
+.tilt-card > * {
+    position: relative;
+    z-index: 10;
+}
+/* Make all main section headings match Drone Design style */
+h1.text-28px, 
+h2.text-28px,
+h2.text-3xl,
+h2.text-4xl {
+    font-size: 2.8rem !important;
+    font-weight: 700 !important;
+    background: linear-gradient(90deg, #00E0FF, #00bcd4) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+}
+
+/* Specifically target the section headings */
+#features h1,
+#tech h2,
+#use-cases h2,
+section h2.text-center {
+    font-size: 2.8rem !important;
+    font-weight: 700 !important;
+    background: linear-gradient(90deg, #00E0FF, #00bcd4) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+}
+/* Model Viewer Container with White Radial Gradient */
+.model-viewer-container {
+    position: relative;
+    width: 100%;
+    height: 600px;
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+/* Model Viewer Container with Background Gradient */
+.model-viewer-container {
+    position: relative;
+    width: 100%;
+    height: 600px;
+    border-radius: 1rem;
+    overflow: hidden;
+    /* Apply gradient as background */
+    background: radial-gradient(ellipse at center, 
+                rgba(255, 255, 255, 0.15) 0%, 
+                rgba(255, 255, 255, 0.1) 25%, 
+                rgba(255, 255, 255, 0.05) 50%, 
+                transparent 75%);
+}
+
+/* Remove the ::before pseudo-element */
+.model-viewer-container::before {
+    display: none;
+}
+
+/* Model viewer on top */
+model-viewer {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    z-index: 1;
+}
+/* Fixed Logo in Top Right Corner - Clean Version */
+.fixed-logo {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    transition: all 0.3s ease;
+}
+
+.fixed-logo:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(0 4px 20px rgba(0, 255, 255, 0.3));
+}
+
+.fixed-logo a {
+    display: block;
+    line-height: 0;
+}
+
+.fixed-logo img {
+    height: 60px;
+    width: auto;
+    display: block;
+}
+
+/* Responsive sizing */
+@media (max-width: 768px) {
+    .fixed-logo {
+        top: 15px;
+        right: 15px;
+    }
+    
+    .fixed-logo img {
+        height: 50px;
+    }
+}
+
+@media (max-width: 480px) {
+    .fixed-logo {
+        top: 10px;
+        right: 10px;
+    }
+    
+    .fixed-logo img {
+        height: 40px;
+    }
+}
+/* Specification Buttons */
+.spec-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    background: linear-gradient(135deg, #00FFFF 0%, #00bcd4 100%);
+    color: #000;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3);
+}
+
+.spec-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 255, 255, 0.5);
+    background: linear-gradient(135deg, #00E0FF 0%, #00aac4 100%);
+}
+
+.spec-button:active {
+    transform: translateY(0);
+}
+
+.spec-button .material-symbols-outlined {
+    font-size: 22px;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .spec-button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+</style>
+
+  </head>
+  <body class="bg-background-dark font-display">
+    <!-- Fixed Logo -->
+  <div class="fixed-logo">
+    <a href="index.html">
+      <img src="images/logo.png" alt="KLE Logo">
+    </a>
+  </div>
+  <canvas id="aurora-bg"></canvas>
+  <div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+
+    <div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+      <div class="layout-container flex h-full grow flex-col">
+        
+        <main class="flex-1">
+          <section class="relative h-screen flex flex-col justify-center items-left text-left text-white overflow-hidden" id="introduction">
+            <video autoplay="" class="absolute top-0 left-0 w-full h-full object-cover -z-10" loop="" muted="" playsinline="">
+              <source src="videos/fullupscale.mp4" type="video/mp4"/>
+            </video>
+            <div class="absolute inset-0 bg-black/1"></div>
+            <div class="relative z-10 px-10 flex flex-col justify-center h-full">
+              <div class="hero-text">
+                <div class="line"><span class="word">MADE FOR</span></div>
+                <div class="line"><span class="word">THE ONES</span></div>
+                <div class="line"><span class="word">WHO</span></div>
+                <div class="line">
+                  <span id="rotatingWord" class="word rotating-word">RISE</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div class="px-4 md:px-10 lg:px-40 py-16 bg-background-dark">
+<div class="py-16 bg-background-dark">
+  <div class="max-w-[1600px] mx-auto px-8">
+    <section class="py-16" id="features">
+  <h1 class="text-white text-[28px] font-bold leading-tight tracking-[-0.015em] px-4 pb-8 pt-5 text-center">Key Features</h1>
+
+  <!-- Full-width container: NO MARGIN, spans entire screen -->
+  <div class="w-full">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 px-0">        
+        <!-- CARD 1 -->
+        <div class="tilt-card flex flex-col gap-3 rounded-xl justify-end p-6 h-[300px] w-full group/card relative overflow-hidden">
+            <video loop muted playsinline class="video-element absolute inset-0 w-full h-full object-cover z-0 opacity-0 pointer-events-none">
+                <source src="videos/features/timeupscaled.mp4" type="video/mp4">
+            </video>
+            <img src="images/thumbnail/time.jpeg" alt="Extended Flight Time" class="thumbnail-img absolute inset-0 w-full h-full object-cover z-10">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-20"></div>
+            <div class="tilt-overlay z-30"></div>
+            <div class="relative z-40 flex flex-col gap-2">
+                <p class="text-white text-xl font-bold leading-tight">Extended Flight Time</p>
+                <div class="max-h-0 overflow-hidden group-hover/card:max-h-40 transition-all duration-500 ease-out">
+                    <p class="text-white/90 text-base leading-relaxed">Experience longer missions with optimized battery performance and efficient power management systems.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CARD 2 -->
+        <div class="tilt-card flex flex-col gap-3 rounded-xl justify-end p-6 h-[300px] w-full group/card relative overflow-hidden">
+            <video loop muted playsinline class="video-element absolute inset-0 w-full h-full object-cover z-0 opacity-0 pointer-events-none">
+                <source src="videos/features/ai.mp4" type="video/mp4">
+            </video>
+            <img src="images/thumbnail/ai.jpeg" alt="AI-Driven Drone" class="thumbnail-img absolute inset-0 w-full h-full object-cover z-10">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-20"></div>
+            <div class="tilt-overlay z-30"></div>
+            <div class="relative z-40 flex flex-col gap-2">
+                <p class="text-white text-xl font-bold leading-tight">AI-Driven Drone</p>
+                <div class="max-h-0 overflow-hidden group-hover/card:max-h-40 transition-all duration-500 ease-out">
+                    <p class="text-white/90 text-base leading-relaxed">Intelligent flight control powered by advanced AI algorithms for autonomous navigation and obstacle avoidance.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CARD 3 -->
+        <div class="tilt-card flex flex-col gap-3 rounded-xl justify-end p-6 h-[300px] w-full group/card relative overflow-hidden">
+            <video loop muted playsinline class="video-element absolute inset-0 w-full h-full object-cover z-0 opacity-0 pointer-events-none">
+                <source src="videos/features/dualupscaled (2).mp4" type="video/mp4">
+            </video>
+            <img src="images/thumbnail/dual.png" alt="Dual Flight Mode" class="thumbnail-img absolute inset-0 w-full h-full object-cover z-10">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-20"></div>
+            <div class="tilt-overlay z-30"></div>
+            <div class="relative z-40 flex flex-col gap-2">
+                <p class="text-white text-xl font-bold leading-tight">Dual Flight Mode</p>
+                <div class="max-h-0 overflow-hidden group-hover/card:max-h-40 transition-all duration-500 ease-out">
+                    <p class="text-white/90 text-base leading-relaxed">Switch seamlessly between manual control and autonomous flight modes for maximum versatility.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CARD 4 -->
+        <div class="tilt-card flex flex-col gap-3 rounded-xl justify-end p-6 h-[300px] w-full group/card relative overflow-hidden">
+            <video loop muted playsinline class="video-element absolute inset-0 w-full h-full object-cover z-0 opacity-0 pointer-events-none">
+                <source src="videos/features/pcb3upscaled.mp4" type="video/mp4">
+            </video>
+            <img src="images/thumbnail/pcb.png" alt="Custom PCB" class="thumbnail-img absolute inset-0 w-full h-full object-cover z-10">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-20"></div>
+            <div class="tilt-overlay z-30"></div>
+            <div class="relative z-40 flex flex-col gap-2">
+                <p class="text-white text-xl font-bold leading-tight">Custom PCB</p>
+                <div class="max-h-0 overflow-hidden group-hover/card:max-h-40 transition-all duration-500 ease-out">
+                    <p class="text-white/90 text-base leading-relaxed">Purpose-built circuit board designed specifically for optimal drone performance and reliability.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CARD 5 -->
+        <div class="tilt-card flex flex-col gap-3 rounded-xl justify-end p-6 h-[300px] w-full group/card relative overflow-hidden">
+            <video loop muted playsinline class="video-element absolute inset-0 w-full h-full object-cover z-0 opacity-0 pointer-events-none">
+                <source src="videos/features/split.mp4" type="video/mp4">
+            </video>
+            <img src="images/thumbnail/split.jpg" alt="Split Design" class="thumbnail-img absolute inset-0 w-full h-full object-cover z-10">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-20"></div>
+            <div class="tilt-overlay z-30"></div>
+            <div class="relative z-40 flex flex-col gap-2">
+                <p class="text-white text-xl font-bold leading-tight">Split Design</p>
+                <div class="max-h-0 overflow-hidden group-hover/card:max-h-40 transition-all duration-500 ease-out">
+                    <p class="text-white/90 text-base leading-relaxed">Modular split architecture allowing for easy maintenance, upgrades, and field repairs.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CARD 6 -->
+        <div class="tilt-card flex flex-col gap-3 rounded-xl justify-end p-6 h-[300px] w-full group/card relative overflow-hidden">
+            <video loop muted playsinline class="video-element absolute inset-0 w-full h-full object-cover z-0 opacity-0 pointer-events-none">
+                <source src="videos/features/pid4upscaled.mp4" type="video/mp4">
+            </video>
+            <img src="images/thumbnail/pid.jpeg" alt="PID Tuned Stability" class="thumbnail-img absolute inset-0 w-full h-full object-cover z-10">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-20"></div>
+            <div class="tilt-overlay z-30"></div>
+            <div class="relative z-40 flex flex-col gap-2">
+                <p class="text-white text-xl font-bold leading-tight">PID Tuned Stability System</p>
+                <div class="max-h-0 overflow-hidden group-hover/card:max-h-40 transition-all duration-500 ease-out">
+                    <p class="text-white/90 text-base leading-relaxed">Precision-tuned PID controllers delivering rock-solid stability even in challenging flight conditions.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CARD 7 -->
+        <div class="tilt-card flex flex-col gap-3 rounded-xl justify-end p-6 h-[300px] w-full group/card relative overflow-hidden">
+            <video loop muted playsinline class="video-element absolute inset-0 w-full h-full object-cover z-0 opacity-0 pointer-events-none">
+                <source src="videos/features/range.mp4" type="video/mp4">
+            </video>
+            <img src="images/thumbnail/range.png" alt="20km Range" class="thumbnail-img absolute inset-0 w-full h-full object-cover z-10">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-20"></div>
+            <div class="tilt-overlay z-30"></div>
+            <div class="relative z-40 flex flex-col gap-2">
+                <p class="text-white text-xl font-bold leading-tight">Range upto 20 km</p>
+                <div class="max-h-0 overflow-hidden group-hover/card:max-h-40 transition-all duration-500 ease-out">
+                    <p class="text-white/90 text-base leading-relaxed">Extended communication range up to 20 kilometers for long-distance operations and missions.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CARD 8 -->
+        <div class="tilt-card flex flex-col gap-3 rounded-xl justify-end p-6 h-[300px] w-full group/card relative overflow-hidden">
+            <video loop muted playsinline class="video-element absolute inset-0 w-full h-full object-cover z-0 opacity-0 pointer-events-none">
+                <source src="videos/features/robust3upscaled.mp4" type="video/mp4">
+            </video>
+            <img src="images/thumbnail/robust.png" alt="Robust and Durable" class="thumbnail-img absolute inset-0 w-full h-full object-cover z-10">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-20"></div>
+            <div class="tilt-overlay z-30"></div>
+            <div class="relative z-40 flex flex-col gap-2">
+                <p class="text-white text-xl font-bold leading-tight">Robust and Durable</p>
+                <div class="max-h-0 overflow-hidden group-hover/card:max-h-40 transition-all duration-500 ease-out">
+                    <p class="text-white/90 text-base leading-relaxed">Built with high-quality materials to withstand harsh conditions and ensure long-lasting performance.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CARD 9 -->
+        <div class="tilt-card flex flex-col gap-3 rounded-xl justify-end p-6 h-[300px] w-full group/card relative overflow-hidden">
+            <video loop muted playsinline class="video-element absolute inset-0 w-full h-full object-cover z-0 opacity-0 pointer-events-none">
+                <source src="videos/features/payloadupscaled.mp4" type="video/mp4">
+            </video>
+            <img src="images/thumbnail/pay.png" alt="Electromagnetic Payload" class="thumbnail-img absolute inset-0 w-full h-full object-cover z-10">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-20"></div>
+            <div class="tilt-overlay z-30"></div>
+            <div class="relative z-40 flex flex-col gap-2">
+                <p class="text-white text-xl font-bold leading-tight">Electromagnetic Payload Actuation</p>
+                <div class="max-h-0 overflow-hidden group-hover/card:max-h-40 transition-all duration-500 ease-out">
+                    <p class="text-white/90 text-base leading-relaxed">Precise electromagnetic actuation with instantaneous response time and compact design.</p>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+</section>
+  </div>
+</div>
+
+<!-- 3D Model Viewer Section -->
+<section class="bg-background-light dark:bg-gray-900/50 py-20 lg:py-32">
+    <div class="mx-auto max-w-5xl px-4 md:px-10">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Interactive 3D Model</h2>
+            <p class="mt-4 text-lg text-gray-600 dark:text-gray-400">Explore the drone design in 3D</p>
+        </div>
+        
+        <!-- Wrap model-viewer in container -->
+        <div class="model-viewer-container">
+            <model-viewer id="drone-model" 
+                src="model/10.glb" 
+                alt="aeroKLE Drone 3D Model"
+                camera-controls
+                shadow-intensity="1"
+                exposure="1"
+                environment-image="neutral"
+                loading="eager"
+                reveal="auto"
+                style="background: transparent !important;">
+                
+                <!-- Loading slot -->
+                <div slot="poster" style="display: flex; align-items: center; justify-content: center; height: 100%; background: linear-gradient(135deg, #1193d4 0%, #0d7ab8 100%);">
+                    <div style="text-align: center; color: white;">
+                        <div style="width: 60px; height: 60px; border: 4px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+                        <p style="font-size: 18px; font-weight: 600;">Loading 3D Model...</p>
+                    </div>
+                </div>
+                
+                <!-- Error slot -->
+                <div slot="error"><!-- error content --></div>
+            </model-viewer>
+        </div>
+
+            <div class="mt-8 text-center">
+              <div class="inline-flex items-center gap-6 bg-white dark:bg-gray-800 px-8 py-4 rounded-lg shadow-lg flex-wrap justify-center">
+                <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                  <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path>
+                  </svg>
+                  <span class="font-medium">Drag & Scroll</span>
+                  <span class="text-gray-500">to explore</span>
+                </div>
+                <div class="w-px h-6 bg-gray-300 dark:bg-gray-600 hidden sm:block"></div>
+                <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                  <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                  </svg>
+                  <span class="font-medium">Tap on mobile</span>
+                  <span class="text-gray-500">for details</span>
+                </div>
+              </div>
+            </div>
+             <!-- ADD THESE BUTTONS HERE -->
+        <div class="flex flex-wrap items-center justify-center gap-4 mt-8">
+            <!-- <a href="specs.html" class="spec-button">
+                <span class="material-symbols-outlined">description</span>
+                <span>Avionic Specifications</span>
+            </a> -->
+            <a href="draft.html" class="spec-button">
+                <span class="material-symbols-outlined">architecture</span>
+                <span>Mechanical 2D Draft</span>
+            </a>
+        </div>
+          </div>
+        </section>
+
+          <!-- Drone Design Section -->
+  <section id="drone-design" class="drone-design-section">
+  <div class="design-header">
+    <h2>Drone Design & Components</h2>
+    <p>Explore the precision-engineered parts that make our drone stable, efficient, and intelligent.</p>
+  </div>
+
+  <div class="bento-grid">
+    <div class="bento-card motors">
+      <img src="images/design/payload.jpeg" alt="Propulsion System">
+      <div class="bento-text">
+        <h4>Payload</h4>
+        <h3>Payload Actuation System</h3>
+        <p>Secures fragile payload and leads to quick mid air release.</p>
+      </div>
+    </div>
+
+    <div class="bento-card controller">
+      <img src="images/design/vents.jpeg" alt="Flight Controller">
+      <div class="bento-text">
+        <h4>Vents</h4>
+        <h3>Vents</h3>
+        <p>Allows for cooling of electronics present within the system.</p>
+      </div>
+    </div>
+
+    <div class="bento-card camera">
+      <img src="images/design/camera.jpeg" alt="Camera & Sensors">
+      <div class="bento-text">
+        <h4>Vision</h4>
+        <h3>Camera & Sensors</h3>
+        <p>4K stabilized camera and AI-driven object detection ensure accurate environmental awareness.</p>
+      </div>
+    </div>
+
+    <div class="bento-card battery">
+      <img src="images/design/toggle.jpeg" alt="Battery Pack">
+      <div class="bento-text">
+        <h4>Toggle</h4>
+        <h3>Toggle Latch Mechanism</h3>
+        <p>Allows quick assembly and disassembly of components.</p>
+      </div>
+    </div>
+
+    <div class="bento-card frame">
+      <img src="images/design/top.jpg" alt="Frame & Arms">
+      <div class="bento-text">
+        <h4>Structure</h4>
+        <h3>Top Cover</h3>
+        <p>Enables quick inspection of flight controllers</p>
+      </div>
+    </div>
+
+    <div class="bento-card comms">
+      <img src="images/design/exploded.jpg" alt="Communication Module">
+      <div class="bento-text">
+        <h4>Exploded</h4>
+        <h3>Exploded View</h3>
+        <p>Detailed view diagram</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-16" id="tech">
+<h2 class="text-white text-[28px] font-bold leading-tight tracking-[-0.015em] px-4 pb-8 pt-5 text-center">Core Technologies</h2>
+
+<style>
+  .carousel-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: rgba(13, 7, 22, 0.5);
+    border: 1px solid #555;
+    border-radius: 24px;
+    padding: 16px;
+    box-sizing: border-box;
+    min-height: 700px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .carousel-viewport {
+    position: relative;
+    overflow: hidden;
+    flex: 1;
+    border-radius: 12px;
+    margin-bottom: 16px;
+  }
+
+  .carousel-track {
+    display: flex;
+    height: 100%;
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    width: 100%;
+  }
+
+  .carousel-slide {
+    flex: 0 0 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .slide-video {
+    width: 100%;
+    height: 400px;
+    background-color: #000;
+    overflow: hidden;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .slide-video video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .slide-content {
+    flex: 1;
+    padding: 24px;
+    background-color: #0d0716;
+    border-radius: 0 0 12px 12px;
+    border: 1px solid #555;
+    border-top: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    box-sizing: border-box;
+  }
+
+  .slide-title {
+    font-size: 22px;
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 12px;
+    margin-top: 0;
+  }
+
+  .slide-description {
+    font-size: 15px;
+    color: #d1d5db;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .carousel-nav {
+    position: absolute;
+    top: 200px; /* Center on video area (400px / 2) */
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 2px solid rgba(0, 255, 255, 0.5);
+    color: #fff;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: all 0.3s ease;
+    z-index: 10;
+    padding: 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+  }
+
+  .carousel-nav::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 255, 255, 0.03) 2px,
+      rgba(255, 255, 255, 0.03) 4px
+    );
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .carousel-nav:hover {
+    background-color: rgba(0, 0, 0, 0.6);
+    border: 2px solid rgba(0, 255, 255, 0.8);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.4), 0 4px 6px rgba(0, 0, 0, 0.3);
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  .carousel-nav:active {
+    transform: translateY(-50%) scale(0.95);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Responsive adjustment for mobile */
+  @media (max-width: 480px) {
+    .carousel-nav {
+      top: 125px; /* Center on mobile video height (250px / 2) */
+    }
+  }
+  
+  @media (min-width: 481px) and (max-width: 768px) {
+    .carousel-nav {
+      top: 150px; /* Center on tablet video height (300px / 2) */
+    }
+  }
+
+  .carousel-nav.prev {
+    left: 10px;
+  }
+
+  .carousel-nav.next {
+    right: 10px;
+  }
+
+  .carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    padding: 0;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #555;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    padding: 0;
+  }
+
+  .dot.active {
+    background-color: #fff;
+    transform: scale(1.2);
+  }
+</style>
+
+<div class="carousel-wrapper" id="carouselContainer">
+  <div class="carousel-viewport">
+    <div class="carousel-track" id="carouselTrack">
+      <!-- Slides will be inserted here -->
+    </div>
+    <button class="carousel-nav prev" id="prevBtn">‹</button>
+    <button class="carousel-nav next" id="nextBtn">›</button>
+  </div>
+  <div class="carousel-dots" id="dotsContainer">
+    <!-- Dots will be inserted here -->
+  </div>
+</div>
+
+<script>
+  const SLIDES_DATA = [
+    {
+      title: 'Autonomous Intelligence',
+      description: 'Advanced AI for smart flight paths, object tracking, and autonomous mission execution. Kshitij\'s brain allows it to navigate complex environments, make real-time decisions, and ensure mission success with minimal human intervention.',
+      video: 'videos/core/autonomous.mp4'
+    },
+    {
+      title: 'Ground Station Processing',
+      description: 'Real-time data analysis and visualization through a powerful and intuitive ground control station. Our system provides operators with actionable insights, comprehensive telemetry, and a high-definition video feed for complete situational awareness.',
+      video: 'videos/core/ground.mp4'
+    },
+    {
+      title: 'In-house Avionics',
+      description: 'Custom-built flight controllers, power management units, and sensors for unparalleled reliability and performance. By designing our avionics stack, we achieve tight integration and optimize every component for the demanding requirements of our missions.',
+      video: 'videos/core/inhouse.mp4'
+    },
+    {
+      title: 'Software Ecosystem',
+      description: 'A suite of proprietary software for mission planning, data management, and seamless integration with third-party analytics tools. Our open-architecture software enables a flexible and powerful workflow from pre-flight checks to post-mission analysis.',
+      video: 'videos/core/ecosystem.mp4'
+    }
+  ];
+
+  class Carousel {
+    constructor() {
+      this.currentSlide = 0;
+      this.totalSlides = SLIDES_DATA.length;
+      this.track = document.getElementById('carouselTrack');
+      this.container = document.getElementById('carouselContainer');
+      this.prevBtn = document.getElementById('prevBtn');
+      this.nextBtn = document.getElementById('nextBtn');
+      this.dotsContainer = document.getElementById('dotsContainer');
+      this.autoplayTimer = null;
+      this.isHovered = false;
+
+      this.init();
+    }
+
+    init() {
+      this.renderSlides();
+      this.renderDots();
+      this.attachEventListeners();
+      this.updateCarousel();
+      this.startAutoplay();
+    }
+
+    renderSlides() {
+      this.track.innerHTML = SLIDES_DATA.map(slide => `
+        <div class="carousel-slide">
+          <div class="slide-video">
+            <video autoplay muted loop playsinline>
+              <source src="${slide.video}" type="video/mp4">
+            </video>
+          </div>
+          <div class="slide-content">
+            <h3 class="slide-title">${slide.title}</h3>
+            <p class="slide-description">${slide.description}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    renderDots() {
+      this.dotsContainer.innerHTML = SLIDES_DATA.map((_, idx) => `
+        <button class="dot ${idx === 0 ? 'active' : ''}" data-index="${idx}"></button>
+      `).join('');
+
+      this.dotsContainer.querySelectorAll('.dot').forEach(dot => {
+        dot.addEventListener('click', (e) => {
+          this.goToSlide(parseInt(e.target.dataset.index));
+        });
+      });
+    }
+
+    attachEventListeners() {
+      this.prevBtn.addEventListener('click', () => this.prevSlide());
+      this.nextBtn.addEventListener('click', () => this.nextSlide());
+
+      this.container.addEventListener('mouseenter', () => {
+        this.isHovered = true;
+        this.stopAutoplay();
+      });
+
+      this.container.addEventListener('mouseleave', () => {
+        this.isHovered = false;
+        this.startAutoplay();
+      });
+    }
+
+    goToSlide(index) {
+      this.currentSlide = index % this.totalSlides;
+      this.updateCarousel();
+      this.resetAutoplay();
+    }
+
+    nextSlide() {
+      this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+      this.updateCarousel();
+      this.resetAutoplay();
+    }
+
+    prevSlide() {
+      this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+      this.updateCarousel();
+      this.resetAutoplay();
+    }
+
+    updateCarousel() {
+      const offset = -this.currentSlide * 100;
+      this.track.style.transform = `translateX(${offset}%)`;
+
+      this.dotsContainer.querySelectorAll('.dot').forEach((dot, idx) => {
+        if (idx === this.currentSlide) {
+          dot.classList.add('active');
+        } else {
+          dot.classList.remove('active');
+        }
+      });
+    }
+
+    startAutoplay() {
+      this.autoplayTimer = setInterval(() => {
+        this.nextSlide();
+      }, 30000);
+    }
+
+    stopAutoplay() {
+      clearInterval(this.autoplayTimer);
+    }
+
+    resetAutoplay() {
+      this.stopAutoplay();
+      if (!this.isHovered) {
+        this.startAutoplay();
+      }
+    }
+  }
+
+  // Start carousel when page loads
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      new Carousel();
+    });
+  } else {
+    new Carousel();
+  }
+</script>
+</section>
+          <!-- Use Cases Section -->
+          <section class="py-16" data-carousel="" id="use-cases">
+<h2 class="text-white text-[28px] font-bold leading-tight tracking-[-0.015em] px-4 pb-8 pt-5 text-center">Market & Use Cases</h2>
+<div class="relative">
+<div class="overflow-hidden">
+<div class="flex transition-transform duration-500 ease-in-out gap-4" data-slides="">
+<div class="flex-shrink-0 w-full md:w-1/2 lg:w-1/3 relative rounded-xl overflow-hidden group">
+<img alt="Drone view of a flooded area" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRHmiLfJpuKPk0pTVSE3cmzRwAzQ5b4mT46OzfkzCd7G9wZ8nuTZDFmxFxPQVbH_XqDcCTSLUgRPVqx2XU91PXtIb9X8kURYNrRyZNEg1ScjJBpRTS5TaLD28LbexTvS2Jhamb_N8C22PFOiZ11EVcYUPNm-4_1SDTsZgyYmvwlw2JErkCDfO75AztK6FcenR49EPFe7roI3PT6W6PSPxvAp2b0EReZ33rOI_yMBo060XnE55WwegxSzJeiW7yW9RR05NmuqT9GYs"/>
+<div class="absolute inset-0 bg-black/50 flex flex-col justify-end p-6">
+<h3 class="text-white text-xl font-bold">Flood Rescue</h3>
+<p class="text-white/80 text-sm max-h-0 opacity-0 group-hover:max-h-full group-hover:opacity-100 transition-all duration-500">Rapidly deploy Kshitij to assess flood-affected areas, locate stranded individuals, and deliver essential supplies.</p>
+</div>
+</div>
+<div class="flex-shrink-0 w-full md:w-1/2 lg:w-1/3 relative rounded-xl overflow-hidden group">
+<img alt="Collapsed building debris after an earthquake" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzn2SPAGEQzGt5AQsTkl299p3Eoum-mcapHbWlRZiAnONR_yeZjpmf2B70DmldBb2zyVYihUiJ3eq74t7NeiVwg_9giy2clw4pd3Tuqv-aC3wIN7ZlRWJwIsxfgfDswySH8PjHsSABlhKhabo1haKtRosJ70UaOnxz7Jt3SHNRu8fpM7f3FEP7pgSytKE1JhbWHSqr5sTqTs3II2ObYxuVnhKiKAcRBqbZHXvOH32zDlo3RPxOx7uvcDC79Y3iq_5VquIvBfJqqOo"/>
+<div class="absolute inset-0 bg-black/50 flex flex-col justify-end p-6">
+<h3 class="text-white text-xl font-bold">Earthquake Debris Scanning</h3>
+<p class="text-white/80 text-sm max-h-0 opacity-0 group-hover:max-h-full group-hover:opacity-100 transition-all duration-500">Navigate complex debris fields to create 3D maps, identify potential hazards, and assist search and rescue teams.</p>
+</div>
+</div>
+<div class="flex-shrink-0 w-full md:w-1/2 lg:w-1/3 relative rounded-xl overflow-hidden group">
+<img alt="Aerial view of a busy highway intersection" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBObYiJY8lOTmCxNiRyNDtXSYpKvHD__Cp07qV4CbmBcHpkmiz5A3KWzvUkiV99Rzqe1kf0csaMtzXRGBem-V99eohDY62_7yTxy3eTN69xKjDrTyULaD9grtTgUiARQtpOO_Y-Uiv9G-RNqMgjK5OGV7b0jFCeRYG0E-yxvLPr1vFqmcYvVkk3HL-ATSWRyaTQsiHHjivZm4OHWLMCENamcO1BPnB3HKfAJnO6rb29WL7ZK0VnH3gBHtyXq-LSQwaBwCpCNbrsOxQ"/>
+<div class="absolute inset-0 bg-black/50 flex flex-col justify-end p-6">
+<h3 class="text-white text-xl font-bold">Traffic & Parking Management</h3>
+<p class="text-white/80 text-sm max-h-0 opacity-0 group-hover:max-h-full group-hover:opacity-100 transition-all duration-500">Monitor traffic flow in real-time, identify congestion points, and optimize parking availability in large areas.</p>
+</div>
+</div>
+<div class="flex-shrink-0 w-full md:w-1/2 lg:w-1/3 relative rounded-xl overflow-hidden group">
+<img alt="Firefighters battling a large industrial fire" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpBlaMAcreoEm9WSw_X4H7f--a7h_WgHTjVAIZoa7z8YfBl1R7s5pMt_MHiPuTswkXm-oLrQcfYx010gSydXIARv21AFGhgOrXQDW9fA_XSONRWnlyaCetuC6SawHLNCE-xW3ukqCcXqUv3LSP5_tVMTPG1NJ_i9_FVToJ6Jc0z9Yv4xvioPWvbayBO-6-CGHvsSY_-h5KobDQ5yEpiSHx-2ayYyuTCWSootllww29ud6wvG30UMLZpVW4lWn5Bq4Q3zgZRKE1lA4"/>
+<div class="absolute inset-0 bg-black/50 flex flex-col justify-end p-6">
+<h3 class="text-white text-xl font-bold">Fire & Hazardous Inspection</h3>
+<p class="text-white/80 text-sm max-h-0 opacity-0 group-hover:max-h-full group-hover:opacity-100 transition-all duration-500">Safely inspect hazardous environments, monitor fire spread, and provide critical situational awareness to first responders.</p>
+</div>
+</div>
+</div>
+</div>
+<button class="absolute top-1/2 left-0 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full z-10 hover:bg-primary transition-colors" data-carousel-prev="">
+<span class="material-symbols-outlined">arrow_back_ios_new</span>
+</button>
+<button class="absolute top-1/2 right-0 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full z-10 hover:bg-primary transition-colors" data-carousel-next="">
+<span class="material-symbols-outlined">arrow_forward_ios</span>
+</button>
+</div>
+</section>
+        </main>
+
+        <footer class="bg-gray-900/50 border-t border-solid border-b-[#283039]">
+          <div class="max-w-[960px] mx-auto px-10 py-8 text-center text-gray-400">
+            <p>© 2025 aeroKLE Student Club. All Rights Reserved.</p>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </div>
+
+<div class="dock-outer">
+  <div class="dock-panel">
+    <!-- Home -->
+    <a href="./index.html" class="dock-item">
+      <div class="dock-icon"><span class="material-symbols-outlined">home</span></div>
+      <div class="dock-label">Home</div>
+    </a>
+    
+    <!-- Pitch -->
+    <a href="./pitch.html" class="dock-item">
+      <div class="dock-icon"><span class="material-symbols-outlined">airplanemode_active</span></div>
+      <div class="dock-label">Pitch</div>
+    </a>
+    
+    <!-- Software -->
+    <a href="./dashboard.html" class="dock-item">
+      <div class="dock-icon"><span class="material-symbols-outlined">code</span></div>
+      <div class="dock-label">Software</div>
+    </a>
+    
+    <!-- Flight Operations -->
+    <a href="./operations.html" class="dock-item">
+      <div class="dock-icon"><span class="material-symbols-outlined">flight_takeoff</span></div>
+      <div class="dock-label">Flight Operations</div>
+    </a>
+    
+    <!-- Technical -->
+    <a href="./technical.html" class="dock-item">
+      <div class="dock-icon"><span class="material-symbols-outlined">engineering</span></div>
+      <div class="dock-label">Technical</div>
+    </a>
+    
+    <!-- About Us -->
+    <a href="./aboutus.html" class="dock-item">
+      <div class="dock-icon"><span class="material-symbols-outlined">groups</span></div>
+      <div class="dock-label">About Us</div>
+    </a>
+  </div>
+</div>
+
+
+<script type="module">
+  import { Renderer, Program, Mesh, Color, Triangle } from 'https://cdn.skypack.dev/ogl';
+
+  const VERT = `#version 300 es
+  in vec2 position;
+  void main() { gl_Position = vec4(position, 0.0, 1.0); }`;
+
+  const FRAG = `#version 300 es
+  precision highp float;
+  uniform float uTime;
+  uniform float uAmplitude;
+  uniform vec3 uColorStops[3];
+  uniform vec2 uResolution;
+  uniform float uBlend;
+  out vec4 fragColor;
+  vec3 permute(vec3 x){return mod(((x*34.0)+1.0)*x,289.0);}
+  float snoise(vec2 v){const vec4 C=vec4(0.211324865405187,0.366025403784439,-0.577350269189626,0.024390243902439);
+  vec2 i=floor(v+dot(v,C.yy));vec2 x0=v-i+dot(i,C.xx);
+  vec2 i1=(x0.x>x0.y)?vec2(1.0,0.0):vec2(0.0,1.0);
+  vec4 x12=x0.xyxy+C.xxzz;x12.xy-=i1;i=mod(i,289.0);
+  vec3 p=permute(permute(i.y+vec3(0.0,i1.y,1.0))+i.x+vec3(0.0,i1.x,1.0));
+  vec3 m=max(0.5-vec3(dot(x0,x0),dot(x12.xy,x12.xy),dot(x12.zw,x12.zw)),0.0);
+  m=m*m;m=m*m;
+  vec3 x=2.0*fract(p*C.www)-1.0;
+  vec3 h=abs(x)-0.5;vec3 ox=floor(x+0.5);
+  vec3 a0=x-ox;m*=1.79284291400159-0.85373472095314*(a0*a0+h*h);
+  vec3 g;g.x=a0.x*x0.x+h.x*x0.y;g.yz=a0.yz*x12.xz+h.yz*x12.yw;
+  return 130.0*dot(m,g);}
+  struct ColorStop{vec3 color;float position;};
+  #define COLOR_RAMP(colors,factor,finalColor){int index=0;for(int i=0;i<2;i++){ColorStop c=colors[i];bool between=c.position<=factor;index=int(mix(float(index),float(i),float(between)));}ColorStop c=colors[index];ColorStop n=colors[index+1];float range=n.position-c.position;float lerpF=(factor-c.position)/range;finalColor=mix(c.color,n.color,lerpF);}
+  void main(){
+    vec2 uv=gl_FragCoord.xy/uResolution;
+    ColorStop colors[3];
+    colors[0]=ColorStop(uColorStops[0],0.0);
+    colors[1]=ColorStop(uColorStops[1],0.5);
+    colors[2]=ColorStop(uColorStops[2],1.0);
+    vec3 rampColor;COLOR_RAMP(colors,uv.x,rampColor);
+    float height=snoise(vec2(uv.x*2.0+uTime*0.1,uTime*0.25))*0.5*uAmplitude;
+    height=exp(height);height=(uv.y*2.0-height+0.2);
+    float intensity=0.6*height;
+    float midPoint=0.20;
+    float auroraAlpha=smoothstep(midPoint-uBlend*0.5,midPoint+uBlend*0.5,intensity);
+    vec3 auroraColor=intensity*rampColor;
+    fragColor=vec4(auroraColor*auroraAlpha,auroraAlpha);
+  }`;
+
+  const canvas = document.getElementById('aurora-bg');
+  const renderer = new Renderer({ canvas, alpha: true, premultipliedAlpha: true });
+  const gl = renderer.gl;
+  gl.clearColor(0, 0, 0, 0);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+
+  const geometry = new Triangle(gl);
+  if (geometry.attributes.uv) delete geometry.attributes.uv;
+
+  const colorStopsArray = ["#3A29FF", "#EDF1F2", "#00E0FF"].map(hex => {
+    const c = new Color(hex);
+    return [c.r, c.g, c.b];
+  });
+
+  const program = new Program(gl, {
+    vertex: VERT,
+    fragment: FRAG,
+    uniforms: {
+      uTime: { value: 0 },
+      uAmplitude: { value: 1.0 },
+      uColorStops: { value: colorStopsArray },
+      uResolution: { value: [window.innerWidth, window.innerHeight] },
+      uBlend: { value: 0.5 }
+    }
+  });
+
+  const mesh = new Mesh(gl, { geometry, program });
+
+  function resize() {
+    // Requirement 2.4: Reduce canvas resolution on mobile devices
+    const isMobile = window.innerWidth <= 768;
+    const scale = isMobile ? 0.5 : 1; // 50% resolution on mobile
+    const width = window.innerWidth * scale;
+    const height = window.innerHeight * scale;
+    
+    renderer.setSize(width, height);
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    program.uniforms.uResolution.value = [width, height];
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+
+  // ===== PERFORMANCE OPTIMIZATION: Aurora Background Rendering =====
+  // Requirement 2.4: Add frame skipping and visibility check
+  let frameCount = 0;
+  let isVisible = true;
+  const isMobile = window.innerWidth <= 768;
+  const frameSkip = isMobile ? 2 : 1; // Skip every other frame on mobile
+
+  // Visibility check to pause when off-screen
+  const visibilityObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      isVisible = entry.isIntersecting;
+    });
+  });
+  visibilityObserver.observe(canvas);
+
+  function animate(t) {
+    requestAnimationFrame(animate);
+    
+    // Only render if visible and on appropriate frame
+    if (isVisible && frameCount % frameSkip === 0) {
+      program.uniforms.uTime.value = t * 0.001;
+      renderer.render({ scene: mesh });
+    }
+    
+    frameCount++;
+  }
+  animate(0);
+</script>
+
+<script>
+  // ===== PERFORMANCE OPTIMIZATION: Throttled Tilt Card Interactions =====
+  // Requirement 2.1: Apply 16ms throttle to tilt card interactions
+  document.querySelectorAll('.tilt-card').forEach(card => {
+    const handleTilt = throttle((e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const rotateX = ((y - centerY) / centerY) * 10;
+      const rotateY = ((x - centerX) / centerX) * -10;
+  
+      card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+      card.querySelector('.tilt-overlay').style.background = `
+        radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.15), transparent 80%)
+      `;
+    }, 16); // 16ms throttle for ~60fps
+    
+    // Use passive event listener for better scroll performance
+    card.addEventListener('mousemove', handleTilt, { passive: true });
+  
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = `rotateX(0deg) rotateY(0deg) scale(1)`;
+      card.querySelector('.tilt-overlay').style.background = 'none';
+    });
+  });
+</script>
+
+<script>
+function scrollToSection(id) {
+  const el = document.getElementById(id);
+  if (el) {
+    window.scrollTo({ top: el.offsetTop - 60, behavior: 'smooth' });
+  }
+}
+</script>
+
+<script>
+  // Rotating word animation - wait for DOM to be ready
+  document.addEventListener('DOMContentLoaded', function() {
+    const rotatingWord = document.getElementById("rotatingWord");
+    
+    // Verify element exists before proceeding
+    if (!rotatingWord) {
+      console.warn('rotatingWord element not found');
+      return;
+    }
+    
+    const words = ["FLY", "BUILD", "DARE", "DREAM", "INNOVATE", "EXPLORE", "ENVISION", "RISE"];
+    let index = 0;
+    let speed = 800;
+
+    function rotate() {
+      rotatingWord.style.opacity = 0;
+      setTimeout(() => {
+        rotatingWord.textContent = words[index];
+        rotatingWord.style.opacity = 1;
+        index = (index + 1) % words.length;
+      }, 300);
+    }
+
+    // Start animation after initial hero text appears (1600ms delay)
+    setTimeout(() => {
+      // Infinite loop - no rotation counter or stopping logic
+      setInterval(() => {
+        rotate();
+      }, speed);
+    }, 1600);
+  });
+</script>
+
+<script>
+  // ===== PERFORMANCE OPTIMIZATION: Throttled Bento Card Interactions =====
+  // Requirement 2.1: Apply 16ms throttle to mousemove events
+  document.querySelectorAll('.bento-card').forEach(card=>{
+    const handleBentoMove = throttle((e) => {
+      const r=card.getBoundingClientRect();
+      const x=((e.clientX-r.left)/r.width)*100;
+      const y=((e.clientY-r.top)/r.height)*100;
+      card.style.setProperty('--x',x+'%');
+      card.style.setProperty('--y',y+'%');
+    }, 16); // 16ms throttle for ~60fps
+    
+    // Use passive event listener for better performance
+    card.addEventListener('mousemove', handleBentoMove, { passive: true });
+    
+    card.addEventListener('mouseleave',()=>{
+      card.style.removeProperty('--x');
+      card.style.removeProperty('--y');
+    });
+  });
+</script>
+<script>
+// ===== PERFORMANCE OPTIMIZATION: Throttle Function =====
+// Requirement 2.1: Throttle animation event handlers
+function throttle(func, delay) {
+  let lastCall = 0;
+  return function(...args) {
+    const now = Date.now();
+    if (now - lastCall >= delay) {
+      lastCall = now;
+      func.apply(this, args);
+    }
+  };
+}
+
+// Video hover play/pause functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Target all tilt-cards that have a video element
+    const videoCards = document.querySelectorAll('.tilt-card');
+    
+    videoCards.forEach(card => {
+        const video = card.querySelector('video');
+        
+        if (video) {
+            // Play video on hover
+            card.addEventListener('mouseenter', () => {
+                video.play().catch(err => console.log('Play error:', err));
+            });
+            
+            // Pause and reset video on mouse leave
+            card.addEventListener('mouseleave', () => {
+                video.pause();
+                video.currentTime = 0; // Reset to beginning
+            });
+        }
+    });
+});
+</script>
+<script>
+// Add scroll effect to logo
+window.addEventListener('scroll', function() {
+    const logo = document.querySelector('.fixed-logo');
+    if (window.scrollY > 100) {
+        logo.classList.add('scrolled');
+    } else {
+        logo.classList.remove('scrolled');
+    }
+});
+</script>
+<script>
+// ===== PERFORMANCE OPTIMIZATION: Video Lazy Loading =====
+// Requirement 2.3: Load videos only when in viewport
+document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.tilt-card');
+    
+    // Create Intersection Observer for lazy loading videos
+    const videoObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const video = entry.target.querySelector('.video-element');
+            if (video && entry.isIntersecting) {
+                // Load video source when it enters viewport
+                const source = video.querySelector('source');
+                if (source && !video.dataset.loaded) {
+                    video.load();
+                    video.dataset.loaded = 'true';
+                }
+            }
+        });
+    }, {
+        rootMargin: '200px' // Start loading 200px before entering viewport
+    });
+    
+    cards.forEach(card => {
+        const video = card.querySelector('.video-element');
+        const thumbnail = card.querySelector('.thumbnail-img');
+        
+        if (video && thumbnail) {
+            // Observe card for lazy loading
+            videoObserver.observe(card);
+            
+            // Hover START: Hide thumbnail, show & play video
+            card.addEventListener('mouseenter', function() {
+                // Hide thumbnail immediately
+                thumbnail.style.opacity = '0';
+                thumbnail.style.pointerEvents = 'none';
+                
+                // Show and play video
+                video.style.opacity = '1';
+                video.style.pointerEvents = 'auto';
+                
+                // Ensure video is loaded before playing
+                if (video.dataset.loaded === 'true') {
+                    video.play().catch(e => console.log('Video play error:', e));
+                }
+            });
+            
+            // Hover END: Show thumbnail, hide & pause video
+            card.addEventListener('mouseleave', function() {
+                // Show thumbnail immediately
+                thumbnail.style.opacity = '1';
+                thumbnail.style.pointerEvents = 'auto';
+                
+                // Hide and pause video
+                video.style.opacity = '0';
+                video.style.pointerEvents = 'none';
+                video.pause();
+                video.currentTime = 0; // Reset to beginning
+            });
+        }
+    });
+    
+    // ===== PRELOAD ABOVE-THE-FOLD VIDEOS =====
+    // Requirement 2.3: Preload only above-the-fold videos
+    const heroVideo = document.querySelector('#introduction video');
+    if (heroVideo) {
+        heroVideo.setAttribute('preload', 'auto');
+    }
+});
+</script>
+
+<!-- Error Handling Script -->
+<script src="js/error-handling.js"></script>
+
+<!-- Accessibility Enhancements Script -->
+<script src="js/accessibility-enhancements.js"></script>
+
+</body>
+</html>

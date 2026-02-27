@@ -1,0 +1,1812 @@
+
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kshitij - Drone Technology</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#00FFFF",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#121212",
+                        "silver-gray": "#C0C0C0"
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .glassmorphism {
+            background: rgba(192, 192, 192, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+    <style>
+
+      .hero-text {
+  position: relative;
+  z-index: 3;
+}
+
+/* Make the hero occupy the entire viewport regardless of parent containers */
+.hero-fullscreen {
+  /*position: fixed !important;*/
+  inset: 0;                /* top:0; right:0; bottom:0; left:0; */
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 10;             /* keep it under header (header z-50) */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+}
+
+/* ensure child content stretches inside the fixed hero */
+.hero-fullscreen .hero-inner {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 2.5rem;
+  padding-left: 3rem;
+  padding-right: 3rem;
+  box-sizing: border-box;
+}
+
+/* Make the right card container fill available height */
+.hero-fullscreen #cardSwapContainer {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+}
+
+/* Smaller screens: stack vertically */
+@media (max-width: 768px) {
+  .hero-fullscreen .hero-inner {
+    grid-template-columns: 1fr;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    gap: 1.25rem;
+  }
+}
+
+section:first-of-type {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Reset spacing from any parent wrappers */
+.layout-content-container,
+.layout-container,
+.relative.flex.min-h-screen.flex-col.items-center.justify-center.p-4 {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+</style>
+
+    <style>
+.dock-outer {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  z-index: 9999;
+}
+
+.dock-panel {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  background: rgba(10, 10, 25, 0.9);
+  border: 1px solid #222;
+  border-radius: 1rem;
+  padding: 0.5rem 1rem;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.dock-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #060010;
+  border: 1px solid #222;
+  border-radius: 10px;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  flex-direction: column;
+}
+
+.dock-item:hover {
+  transform: scale(1.3);
+}
+
+.dock-item:hover .dock-icon {
+  color: #00E0FF;
+}
+
+.dock-icon {
+  color: white;
+  font-size: 24px;
+}
+
+.dock-label {
+  position: absolute;
+  top: -1.8rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #060010;
+  color: #fff;
+  border: 1px solid #222;
+  border-radius: 0.375rem;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.dock-item:hover .dock-label {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-3px);
+}
+
+section {
+  margin: 0;
+  padding: 0;
+}
+
+/* Background Styles */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-x: hidden;
+  background: #000;
+}
+
+</style>
+
+<style>
+.card-swap-container {
+  position: absolute;
+  top: 50%;
+  right: 10%;
+  transform: translateY(-50%);
+  perspective: 1500px;
+  transform-style: preserve-3d;
+  overflow: visible;
+  z-index: 2;
+}
+
+.card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 580px;
+  height: 360px;
+  border-radius: 16px;
+  background: #0a0a0f;
+  transform-style: preserve-3d;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Small title bar at the top (like tabs) */
+.card-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 44px;
+  background: rgba(15, 15, 25, 0.85);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 16px;
+  color: #ddd;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+  z-index: 2;
+}
+
+.card-header span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+.card-header span::before {
+  content: "•";
+  color: #00ffff;
+  font-size: 18px;
+  line-height: 0;
+}
+
+.card-image {
+  position: absolute;
+  top: 44px; /* equal to header height */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.9);
+  transition: transform 0.4s ease;
+  z-index: 1;
+}
+
+.card:hover .card-image {
+  transform: scale(1.05);
+}
+
+.card:hover {
+  transform: translate(-50%, -50%) scale(1.04);
+  box-shadow: 0 25px 60px rgba(0, 255, 255, 0.25);
+}
+
+@media (max-width: 1024px) {
+  .card {
+    width: 460px;
+    height: 300px;
+  }
+  .card-swap-container {
+    right: 4%;
+  }
+}
+
+@media (max-width: 768px) {
+  .card {
+    width: 340px;
+    height: 240px;
+  }
+  .card-swap-container {
+    position: relative;
+    margin: 60px auto;
+    transform: none;
+    right: auto;
+  }
+}
+/* Fixed Logo in Top Right Corner - Clean Version */
+.fixed-logo {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    transition: all 0.3s ease;
+}
+
+.fixed-logo:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(0 4px 20px rgba(0, 255, 255, 0.3));
+}
+
+.fixed-logo a {
+    display: block;
+    line-height: 0;
+}
+
+.fixed-logo img {
+    height: 60px;
+    width: auto;
+    display: block;
+}
+
+/* Responsive sizing */
+@media (max-width: 768px) {
+    .fixed-logo {
+        top: 15px;
+        right: 15px;
+    }
+    
+    .fixed-logo img {
+        height: 50px;
+    }
+}
+
+@media (max-width: 480px) {
+    .fixed-logo {
+        top: 10px;
+        right: 10px;
+    }
+    
+    .fixed-logo img {
+        height: 40px;
+    }
+}
+</style>
+</head>
+
+<style>
+/* Enhanced CSS for FULL-WIDTH sections */
+
+:root {
+  --primary: #00E0FF;
+  --secondary: #7C3AED;
+  --background-dark: #0a0a0f;
+  --card-bg: #13131d;
+  --text-primary: #ffffff;
+  --text-secondary: #b0b0c0;
+  --border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Content Sections - Full Width with no side margins */
+.content-section {
+    padding: 100px 60px;  /* Only top/bottom and internal padding */
+    background: var(--background-dark);
+    width: 100vw;  /* Full viewport width */
+    max-width: 100vw;
+    margin: 0;
+}
+
+.section-wrapper {
+    max-width: 1400px;  /* Increased from 1200px for wider content */
+    margin: 0 auto;
+    width: 100%;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.section-title {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 16px;
+    letter-spacing: -1px;
+}
+
+.section-subtitle {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Business Model Cards */
+.business-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));  /* Wider cards */
+    gap: 40px;  /* Increased gap */
+}
+
+.business-box {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 32px;
+    text-align: center;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.business-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    border-radius: 20px 20px 0 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.business-box:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 25px 45px rgba(0, 224, 255, 0.2);
+}
+
+.business-box:hover::before {
+    opacity: 1;
+}
+
+.business-icon {
+    font-size: 3.5rem;
+    margin-bottom: 24px;
+    display: block;
+}
+
+.business-box h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+}
+
+.business-box p {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
+/* Revenue Flow Box */
+.revenue-flow-box {
+    margin-top: 60px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 48px 40px;
+}
+
+.revenue-title {
+    text-align: center;
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 40px;
+}
+
+.flow-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.flow-step {
+    flex: 1;
+    min-width: 140px;
+    text-align: center;
+}
+
+.flow-step-icon {
+    font-size: 3rem;
+    margin-bottom: 12px;
+}
+
+.flow-step p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.flow-arrow {
+    font-size: 2rem;
+    color: var(--primary);
+    flex-shrink: 0;
+}
+
+/* Comparison Table Box */
+.comparison-box {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px;
+    overflow-x: auto;
+}
+
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.comparison-table th {
+    background: rgba(0, 224, 255, 0.1);
+    color: var(--primary);
+    font-weight: 600;
+    padding: 16px 20px;
+    text-align: left;
+    font-size: 1rem;
+    border-bottom: 2px solid var(--primary);
+}
+
+.comparison-table td {
+    padding: 16px 20px;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.comparison-table tbody tr:hover {
+    background: rgba(0, 224, 255, 0.05);
+}
+
+.comparison-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.comparison-table td strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* Cost Breakdown Grid */
+.cost-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));  /* Wider cost boxes */
+    gap: 50px;  /* Increased gap */
+}
+
+.cost-box {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 32px;
+    position: relative;
+}
+
+.cost-box::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    border-radius: 20px 20px 0 0;
+}
+
+.cost-header {
+    text-align: center;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.cost-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.cost-row:last-of-type {
+    border-bottom: none;
+}
+
+.cost-label {
+    font-size: 1rem;
+    color: var(--text-secondary);
+}
+
+.cost-value {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.cost-total {
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 2px solid var(--primary);
+    text-align: center;
+}
+
+.cost-total-label {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.cost-total-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+/* Partnership Cards Grid */
+.partners-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));  /* Wider partner cards */
+    gap: 40px;
+}
+
+.partner-box {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 32px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.partner-box:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 25px 45px rgba(0, 224, 255, 0.15);
+}
+
+.partner-box h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+}
+
+.partner-box p {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 20px;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 10px 24px;
+    background: rgba(0, 224, 255, 0.15);
+    color: var(--primary);
+    border: 1px solid var(--primary);
+    border-radius: 24px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* CTA Section */
+.cta-box {
+    max-width: 900px;  /* Increased from 800px */
+    margin: 0 auto;
+    text-align: center;
+    background: var(--card-bg);
+    border: 2px solid var(--primary);
+    border-radius: 24px;
+    padding: 60px 40px;
+}
+
+.cta-box h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+}
+
+.cta-box p {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+    line-height: 1.6;
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 16px 48px;
+    background: var(--primary);
+    color: #000;
+    text-decoration: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1.125rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(0, 224, 255, 0.3);
+}
+
+.cta-button:hover {
+    background: #00bcd4;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 224, 255, 0.4);
+}
+
+/* Remove default wrapper padding */
+.layout-content-container {
+    max-width: 100% !important;
+    padding: 0 !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .content-section {
+        padding: 60px 20px;
+    }
+
+    .section-title {
+        font-size: 2rem;
+    }
+
+    .business-grid,
+    .cost-grid,
+    .partners-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .flow-container {
+        flex-direction: column;
+    }
+
+    .flow-arrow {
+        transform: rotate(90deg);
+    }
+
+    .comparison-box {
+        padding: 20px;
+    }
+
+    .comparison-table {
+        font-size: 0.85rem;
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+        padding: 12px 10px;
+    }
+}
+/* Animation for Business Model Cards */
+/* Scroll-triggered animation for Business Model Cards */
+.business-box {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.business-box.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Cards appear one after another with delay */
+.business-box:nth-child(1) {
+    transition-delay: 0s;
+}
+
+.business-box:nth-child(2) {
+    transition-delay: 0.3s;
+}
+
+.business-box:nth-child(3) {
+    transition-delay: 0.6s;
+}
+
+/* Revenue Flow Container */
+.revenue-flow-box {
+    margin-top: 3rem;
+    padding: 2rem;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.revenue-flow-box.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.revenue-title {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #00FFFF;
+    margin-bottom: 2rem;
+    animation: glow 3s ease-in-out infinite;
+}
+
+@keyframes glow {
+    0%, 100% {
+        text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    }
+    50% {
+        text-shadow: 0 0 20px rgba(0, 255, 255, 0.8), 0 0 30px rgba(0, 255, 255, 0.4);
+    }
+}
+
+/* Flow Container - Horizontal Layout */
+.flow-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+/* Flow Step */
+.flow-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.flow-step.animate-in {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+}
+
+/* Sequential animation delays */
+.flow-step:nth-child(1) { transition-delay: 0.2s; }
+.flow-step:nth-child(3) { transition-delay: 0.4s; }
+.flow-step:nth-child(5) { transition-delay: 0.6s; }
+.flow-step:nth-child(7) { transition-delay: 0.8s; }
+
+/* Glassmorphic Icon Box */
+.flow-step-icon {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    border: 2px solid rgba(0, 255, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.flow-step-icon .material-symbols-outlined {
+    font-size: 40px;
+    color: #00FFFF;
+    font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 48;
+}
+
+/* Icon bounce animation on load */
+.flow-step.animate-in .flow-step-icon {
+    animation: bounce 1s ease-in-out;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    25% {
+        transform: translateY(-15px);
+    }
+    50% {
+        transform: translateY(0);
+    }
+    75% {
+        transform: translateY(-8px);
+    }
+}
+
+/* Hover effect */
+.flow-step:hover {
+    transform: scale(1.1) translateY(-5px);
+}
+
+.flow-step:hover .flow-step-icon {
+    border-color: #00FFFF;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+}
+
+.flow-step:hover .flow-step-icon .material-symbols-outlined {
+    animation: rotate 0.6s ease-in-out;
+}
+
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    50% { transform: rotate(10deg); }
+    100% { transform: rotate(0deg); }
+}
+
+/* Flow Step Text */
+.flow-step p {
+    text-align: center;
+    color: #C0C0C0;
+    font-size: 0.95rem;
+    font-weight: 500;
+    max-width: 120px;
+}
+
+/* Flow Arrow */
+.flow-arrow {
+    font-size: 2rem;
+    color: #00FFFF;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.5s ease;
+}
+
+.flow-arrow.animate-in {
+    opacity: 1;
+    transform: translateX(0);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* Arrow delays */
+.flow-arrow:nth-child(2) { transition-delay: 0.3s; }
+.flow-arrow:nth-child(4) { transition-delay: 0.5s; }
+.flow-arrow:nth-child(6) { transition-delay: 0.7s; }
+
+@keyframes pulse {
+    0%, 100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    50% {
+        transform: translateX(10px);
+        opacity: 0.7;
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .flow-container {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    
+    .flow-arrow {
+        transform: rotate(90deg);
+    }
+    
+    .flow-arrow.animate-in {
+        animation: pulseVertical 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulseVertical {
+        0%, 100% {
+            transform: rotate(90deg) translateX(0);
+            opacity: 1;
+        }
+        50% {
+            transform: rotate(90deg) translateX(10px);
+            opacity: 0.7;
+        }
+    }
+}
+/* Decrypted Text Animation Styles */
+#decrypted-text {
+    display: block;
+    white-space: pre-wrap;
+    line-height: 1.2;
+    max-width: 700px; /* Limit width to force "flight" to wrap */
+}
+
+.decrypt-char {
+    display: inline-block;
+    transition: all 0.05s ease;
+}
+
+.decrypt-char.line-break {
+    display: block;
+    height: 0;
+}
+
+.decrypt-char.encrypted {
+    color: rgba(255, 255, 255, 0.4);
+    text-shadow: 0 0 8px rgba(0, 224, 255, 0.5);
+}
+
+.decrypt-char.revealed {
+    color: #00E0FF;
+    text-shadow: 0 0 12px rgba(0, 224, 255, 0.8);
+}
+
+</style>
+
+<body class="bg-background-dark text-white font-display">
+<!-- Fixed Logo -->
+  <div class="fixed-logo">
+    <a href="index.html">
+      <img src="images/logo.png" alt="KLE Logo">
+    </a>
+  </div>
+
+<section class="relative w-screen h-screen flex items-center justify-center bg-[#050505] text-center overflow-hidden mt-0 pt-0">
+    <!-- Full background gradient -->
+    <div class="absolute inset-0 bg-gradient-to-b from-[#0a0a1f] via-[#0a0a0a] to-[#000]"></div>
+    
+    <!-- Content container -->
+    <div class="relative z-10 grid md:grid-cols-2 items-center justify-center w-full h-full px-12 lg:px-24 gap-12">
+        <!-- Left: Text Section -->
+        <div class="text-left space-y-4">
+            <h1 class="text-5xl md:text-6xl font-bold text-white leading-tight">
+                <span id="decrypted-text" class="inline-block"></span>
+            </h1>
+            <p class="text-gray-400 text-lg">Watch it elevate!</p>
+            <a href="innovations.html" class="inline-flex mt-6 items-center justify-center px-6 py-3 bg-[#00E0FF] text-black font-semibold rounded-lg shadow-lg hover:bg-[#00bcd4] transition-all duration-300">
+                Take a Closer Look
+            </a>
+        </div>
+        
+        <!-- Right: CardSwap Section -->
+        <div class="relative flex justify-center items-center w-full h-full">
+            <div id="cardSwapContainer" class="w-full h-full"></div>
+        </div>
+    </div>
+</section>
+
+<!-- Competitive Edge Section -->
+<section class="content-section" id="comparison">
+    <div class="section-wrapper">
+        <div class="section-header">
+            <h2 class="section-title">Competitive Edge</h2>
+            <p class="section-subtitle">See how AeroKle outperforms existing drone solutions in the market</p>
+        </div>
+
+        <div class="comparison-box">
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Existing Drones</th>
+                        <th>AeroKle Drone</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Application</strong></td>
+                        <td>Single-purpose</td>
+                        <td><strong>Multi-mission (Rescue, Surveillance, Traffic)</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Control Mode</strong></td>
+                        <td>Manual/Semi-auto</td>
+                        <td><strong>Manual & Autonomous</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Computation</strong></td>
+                        <td>Onboard (Limited)</td>
+                        <td><strong>Ground-Station AI Processing</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Integration</strong></td>
+                        <td>Limited & Proprietary</td>
+                        <td><strong>API-ready & Plug-and-Play(on subscription)</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cost</strong></td>
+                        <td>₹2.5–3.5L typical</td>
+                        <td><strong>₹1.0–1.5L (Target)</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Power Efficiency</strong></td>
+                        <td>High onboard load</td>
+                        <td><strong>Optimized low power consumption</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- Business Model Section -->
+<section class="content-section" id="business">
+    <div class="section-wrapper">
+        <div class="section-header">
+            <h2 class="section-title">Business Model</h2>
+            <p class="section-subtitle">Our business model ensures both scalability and sustainable recurring revenue</p>
+        </div>
+
+        <div class="business-grid">
+            <div class="business-box">
+                <span class="business-icon">🛩️</span>
+                <h3>Hardware Sales</h3>
+                <p>Initial deployment of drones to government and institutional clients with cutting-edge technology.</p>
+            </div>
+            <div class="business-box">
+                <span class="business-icon">💻</span>
+                <h3>Subscription Software</h3>
+                <p>Annual subscription to AeroKle Ground Station for mission planning, data analytics, and AI processing.</p>
+            </div>
+            <div class="business-box">
+                <span class="business-icon">🔧</span>
+                <h3>Maintenance & Services</h3>
+                <p>Comprehensive annual servicing and firmware upgrades ensuring peak performance and updates.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Cost Breakdown Section -->
+<section class="content-section" id="financials">
+    <div class="section-wrapper">
+        <div class="section-header">
+            <h2 class="section-title">Cost Structure</h2>
+            <p class="section-subtitle">Transparent pricing with significant economies of scale</p>
+        </div>
+
+        <div class="cost-grid">
+            <div class="cost-box">
+                <h3 class="cost-header">Per Unit ( incl. Air Unit)</h3>
+                <div class="cost-row">
+                    <span class="cost-label">Mechanical Components</span>
+                    <span class="cost-value">₹20,000</span>
+                </div>
+                <div class="cost-row">
+                    <span class="cost-label">Avionics</span>
+                    <span class="cost-value">₹80,000</span>
+                </div>
+                <div class="cost-row">
+                    <span class="cost-label">Assembly & Testing</span>
+                    <span class="cost-value">₹15,000</span>
+                </div>
+                <div class="cost-total">
+                    <div class="cost-total-label">Total Cost per Unit</div>
+                    <div class="cost-total-value">₹1,15,000</div>
+                </div>
+            </div>
+
+            <div class="cost-box">
+                <h3 class="cost-header">After Scale-up</h3>
+                <div class="cost-row">
+                    <span class="cost-label">Mechanical Components</span>
+                    <span class="cost-value">₹12,000</span>
+                </div>
+                <div class="cost-row">
+                    <span class="cost-label">Avionics</span>
+                    <span class="cost-value">₹58,000</span>
+                </div>
+                <div class="cost-row">
+                    <span class="cost-label">Assembly & Testing</span>
+                    <span class="cost-value">₹10,000</span>
+                </div>
+                <div class="cost-total">
+                    <div class="cost-total-label">Total Cost per Unit</div>
+                    <div class="cost-total-value">₹80,000</div>
+                </div>
+            </div>
+        </div>
+
+                <!-- Subscription Pricing Cards -->
+        <div class="w-full flex justify-center py-12">
+            <div class="section-wrapper" style="max-width: 1400px; width: 100%;">
+                <div class="section-header">
+                    <h2 class="section-title">Annual Subscription Plans</h2>
+                    <p class="section-subtitle">Choose the right software package for your mission requirements</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+                    <!-- Basic Plan -->
+                    <div class="glassmorphism rounded-xl p-6 border border-gray-700 hover:border-primary transition-all duration-300 hover:scale-105">
+                        <div class="text-center mb-6 pb-6 border-b border-gray-700">
+                            <h3 class="text-2xl font-bold text-white mb-2">Basic</h3>
+                            <p class="text-silver-gray text-sm">Essential ground station software</p>
+                        </div>
+                        <div class="text-center mb-6">
+                            <div class="flex items-baseline justify-center">
+                                <span class="text-xl text-gray-300">₹</span>
+                                <span class="text-5xl font-bold text-white">30,000</span>
+                                <span class="text-lg text-silver-gray ml-2">/year</span>
+                            </div>
+                        </div>
+                        <ul class="space-y-3">
+                            <li class="flex items-start text-sm text-gray-300">
+                                <span class="text-primary mr-2">✓</span>
+                                <span>Standard Autonomous Missions</span>
+                            </li>
+                            <li class="flex items-start text-sm text-gray-300">
+                                <span class="text-primary mr-2">✓</span>
+                                <span>Basic Waypoint Navigation</span>
+                            </li>
+                            <li class="flex items-start text-sm text-gray-300">
+                                <span class="text-primary mr-2">✓</span>
+                                <span>Real-time Monitoring</span>
+                            </li>
+                            <li class="flex items-start text-sm text-gray-300">
+                                <span class="text-primary mr-2">✓</span>
+                                <span>Standard Analytics Dashboard</span>
+                            </li>
+                            <li class="flex items-start text-sm text-gray-300">
+                                <span class="text-primary mr-2">✓</span>
+                                <span>Support</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Professional Plan -->
+                    <div class="glassmorphism rounded-xl p-6 border border-gray-700 hover:border-primary transition-all duration-300 hover:scale-105">
+                        <div class="text-center mb-6 pb-6 border-b border-gray-700">
+                            <h3 class="text-2xl font-bold text-white mb-2">Plus</h3>
+                            <p class="text-silver-gray text-sm">Advanced AI-powered features</p>
+                        </div>
+                        <div class="text-center mb-6">
+                            <div class="flex items-baseline justify-center">
+                                <span class="text-xl text-gray-300">₹</span>
+                                <span class="text-5xl font-bold text-white">50,000</span>
+                                <span class="text-lg text-silver-gray ml-2">/year</span>
+                            </div>
+                        </div>
+                        <ul class="space-y-3">
+                            <li class="flex items-start text-sm text-gray-300">
+                                <span class="text-primary mr-2">✓</span>
+                                <span>All features in basic subscription.</span>
+                            </li>
+                            <li class="flex items-start text-sm text-gray-300">
+                                <span class="text-primary mr-2">✓</span>
+                                <span>Mission Specific Algorithms</span>
+                            </li>
+                            <li class="flex items-start text-sm text-gray-300">
+                                <span class="text-primary mr-2">✓</span>
+                                <span>Basic AI features</span>
+                            </li>
+                            <li class="flex items-start text-sm text-gray-300">
+                                <span class="text-primary mr-2">✓</span>
+                                <span>Autonomous Mission Control</span>
+                            </li>
+                            <li class="flex items-start text-sm text-gray-300">
+                                <span class="text-primary mr-2">✓</span>
+                                <span>Advanced Analytics & Reporting</span>
+                            </li>
+                            <li class="flex items-start text-sm text-gray-300">
+                                <span class="text-primary mr-2">✓</span>
+                                <span>Priority Support (24/7)</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Enterprise Plan -->
+                    <div class="glassmorphism rounded-xl p-6 border border-gray-700 hover:border-primary transition-all duration-300 hover:scale-105">
+                        <div class="text-center mb-6 pb-6 border-b border-gray-700">
+                            <h3 class="text-2xl font-bold text-white mb-2">Pro</h3>
+                            <p class="text-silver-gray text-sm">Complete solution for large operations</p>
+                        </div>
+                        <div class="text-center mb-6">
+                            <div class="flex items-baseline justify-center">
+                                <span class="text-xl text-gray-300">₹</span>
+                                <span class="text-5xl font-bold text-white">75,000</span>
+                                <span class="text-lg text-silver-gray ml-2">/year</span>
+                            </div>
+                        </div>
+                        <ul class="space-y-3">
+                            <li class="flex items-start text-sm text-gray-300">
+                                <span class="text-primary mr-2">✓</span>
+                                <span>All the features in plus subscription.</span>
+                            </li>
+                            <li class="flex items-start text-sm text-gray-300">
+                                <span class="text-primary mr-2">✓</span>
+                                <span>API Integration & SDKs</span>
+                            </li>
+                            <li class="flex items-start text-sm text-gray-300">
+                                <span class="text-primary mr-2">✓</span>
+                                <span>Advanced AI features</span>
+                            </li>
+                            <li class="flex items-start text-sm text-gray-300">
+                                <span class="text-primary mr-2">✓</span>
+                                <span>Access to all Mission Profiles</span>
+                            </li>
+                            <li class="flex items-start text-sm text-gray-300">
+                                <span class="text-primary mr-2">✓</span>
+                                <span>Customization for Specific Use Case</span>
+                            </li>
+                            <li class="flex items-start text-sm text-gray-300">
+                                <span class="text-primary mr-2">✓</span>
+                                <span>On-premise Deployment Option</span>
+                            </li>
+                            <li class="flex items-start text-sm text-gray-300">
+                                <span class="text-primary mr-2">✓</span>
+                                <span>Priority Support (24/7)</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- option1 -->
+<div class="revenue-flow-box">
+    <h3 class="revenue-title">Revenue Flow</h3>
+    <div class="flow-container">
+        <div class="flow-step">
+            <div class="flow-step-icon glassmorphism">
+                <span class="material-symbols-outlined">flight</span>
+            </div>
+            <p>Drone Deployment</p>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+            <div class="flow-step-icon glassmorphism">
+                <span class="material-symbols-outlined">analytics</span>
+            </div>
+            <p>Data Processing</p>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+            <div class="flow-step-icon glassmorphism">
+                <span class="material-symbols-outlined">payments</span>
+            </div>
+            <p>Subscription Revenue p.a</p>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+            <div class="flow-step-icon glassmorphism">
+                <span class="material-symbols-outlined">autorenew</span>
+            </div>
+            <p>Continuous Support</p>
+        </div>
+    </div>
+</div>
+    </div>
+</section>
+
+<!-- Partnerships Section -->
+<section class="content-section" id="partnerships">
+    <div class="section-wrapper">
+        <div class="section-header">
+            <h2 class="section-title">Collaborations</h2>
+            <p class="section-subtitle">Strong partnerships with government and public safety organizations</p>
+        </div>
+
+        <div class="partners-grid">
+            <div class="partner-box">
+                <h3>Forest Department, Dharwad </h3>
+                <p>Missing person search operations and forest management</p>
+                <span class="status-badge">Status: MOU Signed</span>
+            </div>
+            <div class="partner-box">
+                <h3>Karnataka SDRF (State Disaster Response Force)</h3>
+                <p>Flood and disaster response missions</p>
+                <span class="status-badge">Status: Interest Expressed</span>
+            </div>
+            <div class="partner-box">
+                <h3>Hubballi-Dharwad Police Department </h3>
+                <p>Traffic and parking management during large-scale events</p>
+                <span class="status-badge">Status: Interest Expressed</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Final CTA Section -->
+<section class="content-section" id="contact">
+    <div class="section-wrapper">
+        <div class="cta-box">
+            <h2><b>Join AeroKle in revolutionizing autonomous drone technology</b></h2>
+            <a href="mailto:aerokle@kletech.ac.in" class="cta-button">Get in Touch</a>
+        </div>
+    </div>
+</section>
+
+<footer class="border-t border-solid border-b-[#283039] px-10 py-6 text-center text-white/50 text-sm"> © 2025 aeroKLE, KLE Technological University. All Rights Reserved. </footer>
+
+<div class="dock-outer">
+  <div class="dock-panel">
+    <!-- Home -->
+    <a href="./index.html" class="dock-item">
+      <div class="dock-icon"><span class="material-symbols-outlined">home</span></div>
+      <div class="dock-label">Home</div>
+    </a>
+    
+    <!-- Pitch -->
+    <a href="./pitch.html" class="dock-item">
+      <div class="dock-icon"><span class="material-symbols-outlined">airplanemode_active</span></div>
+      <div class="dock-label">Pitch</div>
+    </a>
+    
+    <!-- Software -->
+    <a href="./dashboard.html" class="dock-item">
+      <div class="dock-icon"><span class="material-symbols-outlined">code</span></div>
+      <div class="dock-label">Software</div>
+    </a>
+    
+    <!-- Flight Operations -->
+    <a href="./operations.html" class="dock-item">
+      <div class="dock-icon"><span class="material-symbols-outlined">flight_takeoff</span></div>
+      <div class="dock-label">Flight Operations</div>
+    </a>
+    
+    <!-- Technical -->
+    <a href="./technical.html" class="dock-item">
+      <div class="dock-icon"><span class="material-symbols-outlined">engineering</span></div>
+      <div class="dock-label">Technical</div>
+    </a>
+    
+    <!-- About Us -->
+    <a href="./aboutus.html" class="dock-item">
+      <div class="dock-icon"><span class="material-symbols-outlined">groups</span></div>
+      <div class="dock-label">About Us</div>
+    </a>
+  </div>
+</div>
+
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#00FFFF",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#121212",
+                        "silver-gray": "#C0C0C0"
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js"></script>
+<script>
+class CardSwap {
+  constructor(container, images, {
+    cardDistance = 50,
+    verticalDistance = 40,
+    delay = 4000,
+    skewAmount = 4,
+  } = {}) {
+    this.container = container;
+    this.images = images;
+    this.cardDistance = cardDistance;
+    this.verticalDistance = verticalDistance;
+    this.delay = delay;
+    this.skewAmount = skewAmount;
+    this.cards = [];
+    this.order = [];
+    this.init();
+  }
+
+  makeSlot(i, total) {
+    return { x: i * this.cardDistance, y: -i * this.verticalDistance, z: -i * this.cardDistance * 1.2, zIndex: total - i };
+  }
+
+  place(el, slot) {
+    gsap.set(el, { x: slot.x, y: slot.y, z: slot.z, xPercent: -50, yPercent: -50, transformOrigin: 'center center', zIndex: slot.zIndex });
+  }
+
+  init() {
+    this.container.classList.add('card-swap-container');
+    this.images.forEach((src) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.style.backgroundImage = `url(${src})`;
+      this.container.appendChild(card);
+      this.cards.push(card);
+    });
+    this.order = [...Array(this.cards.length).keys()];
+    this.layout();
+    this.loop();
+  }
+
+  layout() {
+    const total = this.cards.length;
+    this.cards.forEach((el, i) => this.place(el, this.makeSlot(i, total)));
+  }
+
+  swap() {
+    if (this.order.length < 2) return;
+    const [front, ...rest] = this.order;
+    const elFront = this.cards[front];
+    const tl = gsap.timeline();
+    tl.to(elFront, { y: '+=400', opacity: 0.6, duration: 1.2, ease: 'power3.inOut' });
+    rest.forEach((idx, i) => {
+      const el = this.cards[idx];
+      const slot = this.makeSlot(i, this.cards.length);
+      tl.to(el, { ...slot, duration: 1.2, ease: 'power2.out' }, '<0.15');
+    });
+    const backSlot = this.makeSlot(this.cards.length - 1, this.cards.length);
+    tl.set(elFront, { zIndex: backSlot.zIndex });
+    tl.to(elFront, { ...backSlot, opacity: 1, duration: 1.2, ease: 'power3.out' });
+    tl.call(() => { this.order = [...rest, front]; });
+  }
+
+  loop() {
+    this.swap();
+    setInterval(() => this.swap(), this.delay);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const container = document.getElementById("cardSwapContainer");
+  const cards = [
+    {
+      title: "Custom PCB Design",
+      img: "images/innv/pcbhead.jpeg"
+    },
+    {
+      title: "Custom Battery Pack",
+      img: "images/innv/battery.jpeg"
+    },
+    {
+      title: "Electromagnetic Payload Actuation",
+      img: "images/innv/pay.jpeg"
+    }
+  ];
+
+  const images = cards.map(c => c.img);
+  const swapper = new CardSwap(container, images);
+
+  // Add header labels dynamically
+  const cardElements = container.querySelectorAll('.card');
+  cardElements.forEach((card, i) => {
+    const header = document.createElement('div');
+    header.className = 'card-header';
+    header.innerHTML = `<span>${cards[i].title}</span>`;
+    const overlay = document.createElement('div');
+    overlay.className = 'card-image';
+    overlay.style.backgroundImage = `url(${cards[i].img})`;
+    card.innerHTML = '';
+    card.appendChild(header);
+    card.appendChild(overlay);
+  });
+});
+</script>
+<script>
+// Scroll-triggered animation for Business Model cards
+document.addEventListener('DOMContentLoaded', function() {
+    const businessCards = document.querySelectorAll('.business-box');
+    
+    const observerOptions = {
+        threshold: 0.15, // Trigger when 15% of element is visible
+        rootMargin: '0px' // Adjust this to control when animation triggers
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Add animation class when scrolled into view
+                entry.target.classList.add('animate-in');
+            }
+        });
+    }, observerOptions);
+    
+    // Start observing each business card
+    businessCards.forEach(card => {
+        observer.observe(card);
+    });
+});
+</script>
+<script>
+// Revenue Flow Animation on Scroll
+document.addEventListener('DOMContentLoaded', function() {
+    const revenueBox = document.querySelector('.revenue-flow-box');
+    const flowSteps = document.querySelectorAll('.flow-step');
+    const flowArrows = document.querySelectorAll('.flow-arrow');
+    
+    const observerOptions = {
+        threshold: 0.3,
+        rootMargin: '0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Animate the container first
+                revenueBox.classList.add('animate-in');
+                
+                // Then animate steps and arrows sequentially
+                setTimeout(() => {
+                    flowSteps.forEach(step => {
+                        step.classList.add('animate-in');
+                    });
+                    flowArrows.forEach(arrow => {
+                        arrow.classList.add('animate-in');
+                    });
+                }, 300);
+            }
+        });
+    }, observerOptions);
+    
+    if (revenueBox) {
+        observer.observe(revenueBox);
+    }
+});
+</script>
+<script>
+// Decrypted Text Animation (Vanilla JS)
+class DecryptedText {
+    constructor(element, text, options = {}) {
+        this.element = element;
+        this.text = text;
+        this.options = {
+            speed: options.speed || 50,
+            maxIterations: options.maxIterations || 10,
+            sequential: options.sequential !== false,
+            revealDirection: options.revealDirection || 'start',
+            characters: options.characters || 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*()_+',
+            animateOn: options.animateOn || 'view',
+            useOriginalCharsOnly: options.useOriginalCharsOnly || false,
+            ...options
+        };
+        
+        this.displayText = text;
+        this.isAnimating = false;
+        this.revealedIndices = new Set();
+        this.currentIteration = 0;
+        this.interval = null;
+        this.hasAnimated = false;
+        
+        this.init();
+    }
+    
+    init() {
+        this.render();
+        
+        if (this.options.animateOn === 'view' || this.options.animateOn === 'both') {
+            this.setupIntersectionObserver();
+        }
+        
+        if (this.options.animateOn === 'hover' || this.options.animateOn === 'both') {
+            this.element.addEventListener('mouseenter', () => this.startAnimation());
+            this.element.addEventListener('mouseleave', () => this.stopAnimation());
+        }
+    }
+    
+    setupIntersectionObserver() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !this.hasAnimated) {
+                    this.startAnimation();
+                    this.hasAnimated = true;
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+        
+        observer.observe(this.element);
+    }
+    
+    getNextIndex() {
+        const textLength = this.text.length;
+        
+        switch (this.options.revealDirection) {
+            case 'start':
+                return this.revealedIndices.size;
+            case 'end':
+                return textLength - 1 - this.revealedIndices.size;
+            case 'center': {
+                const middle = Math.floor(textLength / 2);
+                const offset = Math.floor(this.revealedIndices.size / 2);
+                const nextIndex = this.revealedIndices.size % 2 === 0 
+                    ? middle + offset 
+                    : middle - offset - 1;
+                
+                if (nextIndex >= 0 && nextIndex < textLength && !this.revealedIndices.has(nextIndex)) {
+                    return nextIndex;
+                }
+                
+                for (let i = 0; i < textLength; i++) {
+                    if (!this.revealedIndices.has(i)) return i;
+                }
+                return 0;
+            }
+            default:
+                return this.revealedIndices.size;
+        }
+    }
+    
+    getRandomChar() {
+        const chars = this.options.characters.split('');
+        return chars[Math.floor(Math.random() * chars.length)];
+    }
+    
+    shuffleText() {
+        const chars = this.text.split('');
+        return chars.map((char, i) => {
+            if (char === ' ' || char === '\n') return char;
+            if (this.revealedIndices.has(i)) return char;
+            return this.getRandomChar();
+        }).join('');
+    }
+    
+    render() {
+    const chars = this.displayText.split('');
+    this.element.innerHTML = chars.map((char, i) => {
+        const isRevealed = this.revealedIndices.has(i) || !this.isAnimating;
+        const className = isRevealed ? 'decrypt-char revealed' : 'decrypt-char encrypted';
+        
+        // Handle newlines
+        if (char === '\n') {
+            return '<br>';
+        }
+        
+        // Handle spaces
+        if (char === ' ') {
+            return `<span class="${className}">&nbsp;</span>`;
+        }
+        
+        return `<span class="${className}">${char}</span>`;
+    }).join('');
+}
+
+    
+    startAnimation() {
+        if (this.isAnimating) return;
+        
+        this.isAnimating = true;
+        this.revealedIndices.clear();
+        this.currentIteration = 0;
+        
+        this.interval = setInterval(() => {
+            if (this.options.sequential) {
+                if (this.revealedIndices.size < this.text.length) {
+                    const nextIndex = this.getNextIndex();
+                    this.revealedIndices.add(nextIndex);
+                    this.displayText = this.shuffleText();
+                    this.render();
+                } else {
+                    this.stopAnimation();
+                }
+            } else {
+                this.displayText = this.shuffleText();
+                this.render();
+                this.currentIteration++;
+                
+                if (this.currentIteration >= this.options.maxIterations) {
+                    this.stopAnimation();
+                    this.displayText = this.text;
+                    this.revealedIndices = new Set([...Array(this.text.length).keys()]);
+                    this.render();
+                }
+            }
+        }, this.options.speed);
+    }
+    
+    stopAnimation() {
+        if (this.interval) {
+            clearInterval(this.interval);
+            this.interval = null;
+        }
+        this.isAnimating = false;
+        
+        if (this.options.animateOn === 'hover') {
+            this.displayText = this.text;
+            this.revealedIndices.clear();
+            this.render();
+        }
+    }
+}
+
+// Initialize Decrypted Text Animation
+document.addEventListener('DOMContentLoaded', function() {
+    const textElement = document.getElementById('decrypted-text');
+    if (textElement) {
+        new DecryptedText(textElement, 'aeroKLE\nwhere innovation takes flight', {
+            speed: 50,
+            maxIterations: 15,
+            sequential: true,
+            revealDirection: 'center',
+            animateOn: 'view',
+            characters: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+'
+        });
+    }
+});
+
+</script>
+<script>
+// Add scroll effect to logo
+window.addEventListener('scroll', function() {
+    const logo = document.querySelector('.fixed-logo');
+    if (window.scrollY > 100) {
+        logo.classList.add('scrolled');
+    } else {
+        logo.classList.remove('scrolled');
+    }
+});
+</script>
+
+<!-- Error Handling Script -->
+<script src="js/error-handling.js"></script>
+
+<!-- Accessibility Enhancements Script -->
+<script src="js/accessibility-enhancements.js"></script>
+
+</body>
+</html>
+

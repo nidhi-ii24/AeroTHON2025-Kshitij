@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+	<title>Kshitij Drone Dashboard</title>
+	<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap"
+		rel="stylesheet" />
+	<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+	<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+
+	<script id="tailwind-config">
+		tailwind.config = {
+			darkMode: "class",
+			theme: {
+				extend: {
+					colors: {
+						"primary": "#0d7ff2",
+						"background-light": "#f5f7f8",
+						"background-dark": "#101922",
+					},
+					fontFamily: {
+						"display": ["Space Grotesk", "sans-serif"]
+					},
+				},
+			},
+		}
+	</script>
+
+	<style>
+		.material-symbols-outlined {
+			font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+		}
+
+		html, body {
+			margin: 0;
+			padding: 0;
+			height: 100%;
+			overflow-x: hidden;
+			background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0f1419 100%);
+		}
+
+		body {
+			min-height: 100vh;
+			font-family: 'Space Grotesk', sans-serif;
+		}
+
+		#aurora-bg {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100vw;
+			height: 100vh;
+			z-index: -10;
+			pointer-events: none;
+		}
+
+		body::before {
+			content: '';
+			position: fixed;
+			inset: 0;
+			background: rgba(0, 0, 0, 0.2);
+			z-index: -5;
+			pointer-events: none;
+		}
+
+		.glass-card {
+			background: rgba(13, 17, 34, 0.7);
+			backdrop-filter: blur(10px);
+			border: 1px solid rgba(59, 130, 246, 0.2);
+			border-radius: 16px;
+			box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+		}
+
+		.stat-card {
+			background: linear-gradient(135deg, rgba(13, 127, 242, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
+			border: 1px solid rgba(59, 130, 246, 0.3);
+			border-radius: 12px;
+			padding: 20px;
+			transition: all 0.3s ease;
+		}
+
+		.stat-card:hover {
+			transform: translateY(-4px);
+			box-shadow: 0 12px 24px rgba(13, 127, 242, 0.3);
+			border-color: rgba(59, 130, 246, 0.6);
+		}
+
+		.status-indicator {
+			width: 12px;
+			height: 12px;
+			border-radius: 50%;
+			animation: pulse 2s infinite;
+		}
+
+		@keyframes pulse {
+			0%,
+			100% {
+				opacity: 1;
+			}
+			50% {
+				opacity: 0.5;
+			}
+		}
+
+		.signal-bar {
+			width: 8px;
+			background: rgba(59, 130, 246, 0.3);
+			border-radius: 2px;
+			transition: all 0.3s ease;
+		}
+
+		.signal-bar.active {
+			background: linear-gradient(to top, #0d7ff2, #3b82f6);
+		}
+
+		.compass-outer {
+			width: 200px;
+			height: 200px;
+			border-radius: 50%;
+			background: radial-gradient(circle, rgba(13, 127, 242, 0.1) 0%, transparent 70%);
+			border: 2px solid rgba(59, 130, 246, 0.3);
+			position: relative;
+		}
+
+		.compass-inner {
+			width: 160px;
+			height: 160px;
+			border-radius: 50%;
+			background: rgba(10, 14, 39, 0.8);
+			border: 2px solid rgba(59, 130, 246, 0.5);
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+		}
+
+		.compass-needle {
+			width: 4px;
+			height: 70px;
+			background: linear-gradient(to bottom, #ef4444, #0d7ff2);
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform-origin: center bottom;
+			transform: translate(-50%, -100%) rotate(var(--heading, 74deg));
+			transition: transform 0.5s ease;
+			border-radius: 2px;
+		}
+
+		.message-item {
+			background: rgba(239, 68, 68, 0.1);
+			border-left: 3px solid #ef4444;
+			padding: 12px;
+			margin-bottom: 8px;
+			border-radius: 4px;
+			font-size: 14px;
+			color: #fca5a5;
+		}
+
+		.video-container {
+			position: relative;
+			width: 100%;
+			padding-bottom: 56.25%;
+			background: #000;
+			border-radius: 12px;
+			overflow: hidden;
+		}
+
+		.video-container video {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		.battery-indicator {
+			width: 80px;
+			height: 35px;
+			border: 3px solid rgba(59, 130, 246, 0.5);
+			border-radius: 6px;
+			position: relative;
+			overflow: hidden;
+		}
+
+		.battery-fill {
+			height: 100%;
+			background: linear-gradient(to right, #10b981, #3b82f6);
+			transition: width 0.5s ease;
+		}
+
+		.battery-tip {
+			width: 6px;
+			height: 15px;
+			background: rgba(59, 130, 246, 0.5);
+			position: absolute;
+			right: -9px;
+			top: 50%;
+			transform: translateY(-50%);
+			border-radius: 0 3px 3px 0;
+		}
+
+		.flight-mode-badge {
+			display: inline-block;
+			padding: 8px 20px;
+			background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+			border-radius: 24px;
+			font-weight: 600;
+			font-size: 16px;
+			color: white;
+			text-transform: uppercase;
+			letter-spacing: 1px;
+			box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+		}
+
+		.gps-coordinate {
+			font-family: 'Courier New', monospace;
+			font-size: 18px;
+			color: #60a5fa;
+			font-weight: 600;
+		}
+
+		/* Dock Navigation Styles */
+		.dock-outer {
+			position: fixed;
+			bottom: 10px;
+			left: 50%;
+			transform: translateX(-50%);
+			display: flex;
+			align-items: center;
+			z-index: 9999;
+		}
+
+		.dock-panel {
+			display: flex;
+			align-items: flex-end;
+			gap: 1rem;
+			background: rgba(10, 10, 25, 0.9);
+			border: 1px solid #222;
+			border-radius: 1rem;
+			padding: 0.5rem 1rem;
+			backdrop-filter: blur(10px);
+			box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+		}
+
+		.dock-item {
+			position: relative;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: #060010;
+			border: 1px solid #222;
+			border-radius: 10px;
+			width: 50px;
+			height: 50px;
+			cursor: pointer;
+			transition: transform 0.2s ease;
+			flex-direction: column;
+			text-decoration: none;
+		}
+
+		.dock-item:hover .dock-icon {
+			color: #00E0FF;
+		}
+
+		.dock-item:hover {
+			transform: scale(1.3);
+		}
+
+		.dock-icon {
+			color: #fff;
+			font-size: 24px;
+			transition: color 0.2s ease;
+		}
+
+		.dock-label {
+			position: absolute;
+			bottom: 100%;
+			left: 50%;
+			transform: translateX(-50%);
+			background: rgba(0, 0, 0, 0.9);
+			color: #fff;
+			padding: 4px 8px;
+			border-radius: 4px;
+			font-size: 12px;
+			white-space: nowrap;
+			opacity: 0;
+			pointer-events: none;
+			transition: opacity 0.2s ease;
+			margin-bottom: 8px;
+		}
+
+		.dock-item:hover .dock-label {
+			opacity: 1;
+		}
+
+		/* Fixed Logo in Top Right Corner - Clean Version */
+		.fixed-logo {
+			position: fixed;
+			top: 20px;
+			right: 20px;
+			z-index: 9999;
+			transition: all 0.3s ease;
+		}
+
+		.fixed-logo:hover {
+			transform: scale(1.05);
+			filter: drop-shadow(0 4px 20px rgba(0, 255, 255, 0.3));
+		}
+
+		.fixed-logo a {
+			display: block;
+			line-height: 0;
+		}
+
+		.fixed-logo img {
+			height: 60px;
+			width: auto;
+			display: block;
+		}
+
+		/* Responsive sizing */
+		@media (max-width: 768px) {
+			.fixed-logo {
+				top: 15px;
+				right: 15px;
+			}
+			
+			.fixed-logo img {
+				height: 50px;
+			}
+		}
+
+		@media (max-width: 480px) {
+			.fixed-logo {
+				top: 10px;
+				right: 10px;
+			}
+			
+			.fixed-logo img {
+				height: 40px;
+			}
+		}
+	</style>
+</head>
+
+<body class="p-4 md:p-8">
+	<!-- Fixed Logo -->
+	<div class="fixed-logo">
+		<a href="index.html">
+			<img src="images/logo.png" alt="KLE Logo">
+		</a>
+	</div>
+	<canvas id="aurora-bg"></canvas>
+	<div class="max-w-7xl mx-auto">
+		<!-- Header -->
+		<div class="glass-card p-6 mb-6">
+			<div class="flex items-center justify-between flex-wrap gap-4">
+				<div class="flex items-center gap-4">
+					<h1 class="text-3xl font-bold text-white"
+						style="font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px;">
+						KSHITIJ DRONE CONTROL</h1>
+					<div class="status-indicator bg-red-500" id="statusIndicator"></div>
+					<span class="text-red-400 text-sm font-semibold" id="statusText">DISCONNECTED</span>
+				</div>
+				<div class="flex items-center gap-4">
+					<button id="toggleConnection" class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg transition-all duration-300 flex items-center gap-2">
+						<span class="material-symbols-outlined">power_settings_new</span>
+						CONNECT
+					</button>
+					<div class="flight-mode-badge" id="flightMode" style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);">UNKNOWN</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Main Grid -->
+		<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+			<!-- Left Column -->
+			<div class="lg:col-span-2 space-y-6">
+				<!-- Camera View -->
+				<div class="glass-card p-6">
+					<h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+						<span class="material-symbols-outlined text-primary">videocam</span>
+						LIVE CAMERA FEED
+					</h2>
+					<div class="video-container">
+						<video id="droneVideo" autoplay loop muted playsinline>
+							<source src="https://videos.pexels.com/video-files/3843433/3843433-hd_1920_1080_30fps.mp4"
+								type="video/mp4" id="videoSource">
+						</video>
+						<div id="recordingBadge" style="display: none;"
+							class="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-2">
+							<span class="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+							RECORDING
+						</div>
+						<div id="disconnectedOverlay" class="absolute inset-0 bg-black/80 flex items-center justify-center">
+							<div class="text-center">
+								<span class="material-symbols-outlined text-gray-500 text-6xl mb-4">videocam_off</span>
+								<p class="text-gray-400 text-lg">No Video Feed</p>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Telemetry Stats -->
+				<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+					<div class="stat-card">
+						<div class="flex items-center gap-2 mb-2">
+							<span class="material-symbols-outlined text-primary text-xl">speed</span>
+							<span class="text-gray-400 text-sm">Ground Speed</span>
+						</div>
+						<div class="text-3xl font-bold text-white" id="speedValue">--</div>
+						<div class="text-sm text-gray-400">m/sec</div>
+					</div>
+
+					<div class="stat-card">
+						<div class="flex items-center gap-2 mb-2">
+							<span class="material-symbols-outlined text-primary text-xl">battery_charging_full</span>
+							<span class="text-gray-400 text-sm">Battery</span>
+						</div>
+						<div class="text-3xl font-bold text-white" id="batteryValue">--</div>
+						<div class="text-sm text-gray-400">Volts</div>
+						<div class="battery-indicator mt-3">
+							<div class="battery-fill" id="batteryFill" style="width: 0%;"></div>
+							<div class="battery-tip"></div>
+						</div>
+					</div>
+
+					<div class="stat-card">
+						<div class="flex items-center gap-2 mb-2">
+							<span class="material-symbols-outlined text-primary text-xl">explore</span>
+							<span class="text-gray-400 text-sm">Heading</span>
+						</div>
+						<div class="text-3xl font-bold text-white" id="headingValue">--</div>
+						<div class="text-sm text-gray-400">North</div>
+					</div>
+
+					<div class="stat-card">
+						<div class="flex items-center gap-2 mb-2">
+							<span class="material-symbols-outlined text-primary text-xl">vibration</span>
+							<span class="text-gray-400 text-sm">Vibrations</span>
+						</div>
+						<div class="text-3xl font-bold text-white" id="vibrationsValue">--</div>
+						<div class="text-sm text-gray-400">cm/sec</div>
+					</div>
+				</div>
+
+				<!-- GPS Coordinates -->
+				<div class="glass-card p-6">
+					<h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+						<span class="material-symbols-outlined text-primary">location_on</span>
+						GPS POSITION
+					</h2>
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+						<div>
+							<div class="text-sm text-gray-400 mb-2">LATITUDE</div>
+							<div class="gps-coordinate" id="latValue">--</div>
+						</div>
+						<div>
+							<div class="text-sm text-gray-400 mb-2">LONGITUDE</div>
+							<div class="gps-coordinate" id="lonValue">--</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Right Column -->
+			<div class="space-y-6">
+				<!-- Compass -->
+				<div class="glass-card p-6">
+					<h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+						<span class="material-symbols-outlined text-primary">navigation</span>
+						COMPASS
+					</h2>
+					<div class="flex justify-center items-center py-4">
+						<div class="compass-outer">
+							<div class="compass-inner flex items-center justify-center">
+								<div class="text-center">
+									<div class="text-4xl font-bold text-white" id="compassValue">--</div>
+									<div class="text-sm text-gray-400">NORTH</div>
+								</div>
+							</div>
+							<div class="compass-needle" id="compassNeedle" style="--heading: 0deg;"></div>
+							<!-- Cardinal directions -->
+							<div class="absolute top-2 left-1/2 -translate-x-1/2 text-white font-bold">N</div>
+							<div class="absolute bottom-2 left-1/2 -translate-x-1/2 text-gray-400 font-bold">S</div>
+							<div class="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 font-bold">W</div>
+							<div class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 font-bold">E</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Signal Strength -->
+				<div class="glass-card p-6">
+					<h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+						<span class="material-symbols-outlined text-primary">signal_cellular_alt</span>
+						SIGNAL STRENGTH
+					</h2>
+					<div class="flex items-end justify-center gap-2 py-6" id="signalBars">
+						<div class="signal-bar h-8"></div>
+						<div class="signal-bar h-12"></div>
+						<div class="signal-bar h-16"></div>
+						<div class="signal-bar h-20"></div>
+						<div class="signal-bar h-24"></div>
+					</div>
+					<div class="text-center">
+						<div class="text-2xl font-bold text-white" id="signalText">No Signal</div>
+						<div class="text-sm text-gray-400" id="signalBarsText">0/5 Bars</div>
+					</div>
+				</div>
+
+				<!-- Messages -->
+				<div class="glass-card p-6">
+					<h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+						<span class="material-symbols-outlined text-primary">warning</span>
+						SYSTEM MESSAGES
+					</h2>
+					<div class="space-y-2 max-h-64 overflow-y-auto">
+						<div class="message-item">
+							<div class="flex items-start gap-2">
+								<span class="material-symbols-outlined text-red-400 text-lg">error</span>
+								<span>Arming Checks Disabled</span>
+							</div>
+						</div>
+						<div class="message-item">
+							<div class="flex items-start gap-2">
+								<span class="material-symbols-outlined text-red-400 text-lg">info</span>
+								<span>Frame Type: Quadcopter X</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Footer -->
+		<div class="glass-card p-4 mt-6 text-center text-gray-400 text-sm">
+			© 2025 aeroKLE Student Club. All Rights Reserved.
+		</div>
+	</div>
+
+	<!-- Dock Navigation -->
+	<div class="dock-outer">
+		<div class="dock-panel">
+			<!-- Home -->
+			<a href="./index.html" class="dock-item">
+				<div class="dock-icon"><span class="material-symbols-outlined">home</span></div>
+				<div class="dock-label">Home</div>
+			</a>
+			
+			<!-- Pitch -->
+			<a href="./pitch.html" class="dock-item">
+				<div class="dock-icon"><span class="material-symbols-outlined">airplanemode_active</span></div>
+				<div class="dock-label">Pitch</div>
+			</a>
+			
+			<!-- Software -->
+			<a href="./dashboard.html" class="dock-item">
+				<div class="dock-icon"><span class="material-symbols-outlined">code</span></div>
+				<div class="dock-label">Software</div>
+			</a>
+			
+			<!-- Flight Operations -->
+			<a href="./operations.html" class="dock-item">
+				<div class="dock-icon"><span class="material-symbols-outlined">flight_takeoff</span></div>
+				<div class="dock-label">Flight Operations</div>
+			</a>
+			
+			<!-- Technical -->
+			<a href="./technical.html" class="dock-item">
+				<div class="dock-icon"><span class="material-symbols-outlined">engineering</span></div>
+				<div class="dock-label">Technical</div>
+			</a>
+			
+			<!-- About Us -->
+			<a href="./aboutus.html" class="dock-item">
+				<div class="dock-icon"><span class="material-symbols-outlined">groups</span></div>
+				<div class="dock-label">About Us</div>
+			</a>
+		</div>
+
+	<!-- Dashboard Update Script -->
+	<script>
+		let isConnected = false;
+		let updateInterval = null;
+		let connectionStartTime = null;
+		let currentSpeed = 0;
+		let currentBattery = 15.9;
+		let currentHeading = 0; // Start at North (0°)
+		let currentLat = 75.12463618153;
+		let currentLon = 52.25461646382;
+
+		const toggleBtn = document.getElementById('toggleConnection');
+		const statusIndicator = document.getElementById('statusIndicator');
+		const statusText = document.getElementById('statusText');
+		const flightMode = document.getElementById('flightMode');
+		const droneVideo = document.getElementById('droneVideo');
+		const videoSource = document.getElementById('videoSource');
+		const recordingBadge = document.getElementById('recordingBadge');
+		const disconnectedOverlay = document.getElementById('disconnectedOverlay');
+
+		// Toggle connection
+		toggleBtn.addEventListener('click', function() {
+			isConnected = !isConnected;
+			
+			if (isConnected) {
+				// Reset initial values for new connection
+				connectionStartTime = Date.now();
+				currentSpeed = 0;
+				currentHeading = 0; // North
+				currentBattery = 15.9;
+				
+				// Connected state
+				toggleBtn.innerHTML = '<span class="material-symbols-outlined">power_settings_new</span> DISCONNECT';
+				toggleBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+				toggleBtn.classList.add('bg-red-600', 'hover:bg-red-700');
+				
+				statusIndicator.classList.remove('bg-red-500');
+				statusIndicator.classList.add('bg-green-500');
+				statusText.textContent = 'CONNECTED';
+				statusText.classList.remove('text-red-400');
+				statusText.classList.add('text-green-400');
+				
+				flightMode.textContent = 'STABILIZE';
+				flightMode.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+				
+				// Change video to takeoff.mp4
+				videoSource.src = 'videos/takeoff.mp4';
+				droneVideo.load();
+				droneVideo.play();
+				
+				recordingBadge.style.display = 'flex';
+				disconnectedOverlay.style.display = 'none';
+				
+				// Enable signal bars
+				const signalBars = document.querySelectorAll('#signalBars .signal-bar');
+				signalBars.forEach((bar, index) => {
+					if (index < 4) bar.classList.add('active');
+				});
+				document.getElementById('signalText').textContent = 'Excellent';
+				document.getElementById('signalBarsText').textContent = '4/5 Bars';
+				
+				// Start updating dashboard
+				updateInterval = setInterval(updateDashboard, 500);
+			} else {
+				// Disconnected state
+				toggleBtn.innerHTML = '<span class="material-symbols-outlined">power_settings_new</span> CONNECT';
+				toggleBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
+				toggleBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+				
+				statusIndicator.classList.remove('bg-green-500');
+				statusIndicator.classList.add('bg-red-500');
+				statusText.textContent = 'DISCONNECTED';
+				statusText.classList.remove('text-green-400');
+				statusText.classList.add('text-red-400');
+				
+				flightMode.textContent = 'UNKNOWN';
+				flightMode.style.background = 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)';
+				
+				// Change video back to default
+				videoSource.src = 'https://videos.pexels.com/video-files/3843433/3843433-hd_1920_1080_30fps.mp4';
+				droneVideo.load();
+				
+				recordingBadge.style.display = 'none';
+				disconnectedOverlay.style.display = 'flex';
+				
+				// Disable signal bars
+				const signalBars = document.querySelectorAll('#signalBars .signal-bar');
+				signalBars.forEach(bar => bar.classList.remove('active'));
+				document.getElementById('signalText').textContent = 'No Signal';
+				document.getElementById('signalBarsText').textContent = '0/5 Bars';
+				
+				// Stop updating dashboard and reset values
+				if (updateInterval) {
+					clearInterval(updateInterval);
+					updateInterval = null;
+				}
+				connectionStartTime = null;
+				resetDashboard();
+			}
+		});
+
+		function resetDashboard() {
+			document.getElementById('speedValue').textContent = '--';
+			document.getElementById('batteryValue').textContent = '--';
+			document.getElementById('headingValue').textContent = '--';
+			document.getElementById('vibrationsValue').textContent = '--';
+			document.getElementById('latValue').textContent = '--';
+			document.getElementById('lonValue').textContent = '--';
+			document.getElementById('compassValue').textContent = '--';
+			document.getElementById('batteryFill').style.width = '0%';
+			document.getElementById('compassNeedle').style.setProperty('--heading', '0deg');
+		}
+
+		function updateDashboard() {
+			if (!isConnected || !connectionStartTime) return;
+
+			const elapsedSeconds = (Date.now() - connectionStartTime) / 1000;
+			const isInitializing = elapsedSeconds < 10;
+
+			// Update battery (always drains slowly)
+			currentBattery = Math.max(12, currentBattery - 0.001);
+			document.getElementById('batteryValue').textContent = currentBattery.toFixed(2);
+			const batteryPercent = ((currentBattery - 12) / (16.8 - 12)) * 100;
+			document.getElementById('batteryFill').style.width = batteryPercent + '%';
+
+			if (isInitializing) {
+				// First 10 seconds: initialization phase
+				// Ground speed stays at 0
+				document.getElementById('speedValue').textContent = '0.0';
+				
+				// No vibrations
+				document.getElementById('vibrationsValue').textContent = '0';
+				
+				// Compass transitions from North (0°) to West (270°)
+				// Smooth transition over 10 seconds
+				const targetHeading = 270;
+				currentHeading = Math.floor((elapsedSeconds / 10) * targetHeading);
+				
+			} else {
+				// After 10 seconds: normal operation
+				// Update ground speed with random variation
+				currentSpeed = Math.max(0, Math.min(5, currentSpeed + (Math.random() - 0.5) * 0.2));
+				document.getElementById('speedValue').textContent = currentSpeed.toFixed(1);
+				
+				// Update vibrations
+				const newVibrations = (4 + Math.random() * 2).toFixed(0);
+				document.getElementById('vibrationsValue').textContent = newVibrations;
+				
+				// Update heading with gradual change from current position
+				currentHeading = (currentHeading + Math.floor(Math.random() * 3 - 1) + 360) % 360;
+			}
+
+			// Update heading display (both phases)
+			document.getElementById('headingValue').textContent = currentHeading + '°';
+			document.getElementById('compassValue').textContent = currentHeading + '°';
+			document.getElementById('compassNeedle').style.setProperty('--heading', currentHeading + 'deg');
+
+			// Update GPS coordinates with slight drift (both phases)
+			currentLat = currentLat + (Math.random() - 0.5) * 0.00001;
+			currentLon = currentLon + (Math.random() - 0.5) * 0.00001;
+			document.getElementById('latValue').textContent = currentLat.toFixed(11);
+			document.getElementById('lonValue').textContent = currentLon.toFixed(11);
+		}
+
+		// Initialize dashboard in disconnected state
+		resetDashboard();
+	</script>
+
+	<!-- Aurora Background Script -->
+	<script type="module">
+		import { Renderer, Program, Mesh, Color, Triangle } from 'https://cdn.skypack.dev/ogl';
+
+		const VERT = `#version 300 es
+		in vec2 position;
+		void main() { gl_Position = vec4(position, 0.0, 1.0); }`;
+
+		const FRAG = `#version 300 es
+		precision highp float;
+		uniform float uTime;
+		uniform float uAmplitude;
+		uniform vec3 uColorStops[3];
+		uniform vec2 uResolution;
+		uniform float uBlend;
+		out vec4 fragColor;
+		vec3 permute(vec3 x){return mod(((x*34.0)+1.0)*x,289.0);}
+		float snoise(vec2 v){const vec4 C=vec4(0.211324865405187,0.366025403784439,-0.577350269189626,0.024390243902439);
+		vec2 i=floor(v+dot(v,C.yy));vec2 x0=v-i+dot(i,C.xx);
+		vec2 i1=(x0.x>x0.y)?vec2(1.0,0.0):vec2(0.0,1.0);
+		vec4 x12=x0.xyxy+C.xxzz;x12.xy-=i1;i=mod(i,289.0);
+		vec3 p=permute(permute(i.y+vec3(0.0,i1.y,1.0))+i.x+vec3(0.0,i1.x,1.0));
+		vec3 m=max(0.5-vec3(dot(x0,x0),dot(x12.xy,x12.xy),dot(x12.zw,x12.zw)),0.0);
+		m=m*m;m=m*m;
+		vec3 x=2.0*fract(p*C.www)-1.0;
+		vec3 h=abs(x)-0.5;vec3 ox=floor(x+0.5);
+		vec3 a0=x-ox;m*=1.79284291400159-0.85373472095314*(a0*a0+h*h);
+		vec3 g;g.x=a0.x*x0.x+h.x*x0.y;g.yz=a0.yz*x12.xz+h.yz*x12.yw;
+		return 130.0*dot(m,g);}
+		struct ColorStop{vec3 color;float position;};
+		#define COLOR_RAMP(colors,factor,finalColor){int index=0;for(int i=0;i<2;i++){ColorStop c=colors[i];bool between=c.position<=factor;index=int(mix(float(index),float(i),float(between)));}ColorStop c=colors[index];ColorStop n=colors[index+1];float range=n.position-c.position;float lerpF=(factor-c.position)/range;finalColor=mix(c.color,n.color,lerpF);}
+		void main(){
+		  vec2 uv=gl_FragCoord.xy/uResolution;
+		  ColorStop colors[3];
+		  colors[0]=ColorStop(uColorStops[0],0.0);
+		  colors[1]=ColorStop(uColorStops[1],0.5);
+		  colors[2]=ColorStop(uColorStops[2],1.0);
+		  vec3 rampColor;COLOR_RAMP(colors,uv.x,rampColor);
+		  float height=snoise(vec2(uv.x*2.0+uTime*0.1,uTime*0.25))*0.5*uAmplitude;
+		  height=exp(height);height=(uv.y*2.0-height+0.2);
+		  float intensity=0.6*height;
+		  float midPoint=0.20;
+		  float auroraAlpha=smoothstep(midPoint-uBlend*0.5,midPoint+uBlend*0.5,intensity);
+		  vec3 auroraColor=intensity*rampColor;
+		  fragColor=vec4(auroraColor*auroraAlpha,auroraAlpha);
+		}`;
+
+		const canvas = document.getElementById('aurora-bg');
+		const renderer = new Renderer({ canvas, alpha: true, premultipliedAlpha: true });
+		const gl = renderer.gl;
+		gl.clearColor(0, 0, 0, 0);
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		gl.enable(gl.BLEND);
+		gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+
+		const geometry = new Triangle(gl);
+		if (geometry.attributes.uv) delete geometry.attributes.uv;
+
+		const colorStopsArray = ["#3A29FF", "#EDF1F2", "#00E0FF"].map(hex => {
+		  const c = new Color(hex);
+		  return [c.r, c.g, c.b];
+		});
+
+		const program = new Program(gl, {
+		  vertex: VERT,
+		  fragment: FRAG,
+		  uniforms: {
+		    uTime: { value: 0 },
+		    uAmplitude: { value: 1.0 },
+		    uColorStops: { value: colorStopsArray },
+		    uResolution: { value: [window.innerWidth, window.innerHeight] },
+		    uBlend: { value: 0.5 }
+		  }
+		});
+
+		const mesh = new Mesh(gl, { geometry, program });
+
+		function resize() {
+		  renderer.setSize(window.innerWidth, window.innerHeight);
+		  program.uniforms.uResolution.value = [window.innerWidth, window.innerHeight];
+		}
+
+		window.addEventListener('resize', resize);
+		resize();
+
+		function animate(t) {
+		  requestAnimationFrame(animate);
+		  program.uniforms.uTime.value = t * 0.001;
+		  renderer.render({ scene: mesh });
+		}
+		animate(0);
+	</script>
+
+	<!-- Error Handling Script -->
+	<script src="js/error-handling.js"></script>
+
+	<!-- Accessibility Enhancements Script -->
+	<script src="js/accessibility-enhancements.js"></script>
+</body>
+
+</html>

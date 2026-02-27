@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Technical Inspection - Kshitij Drone</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0d7ff2",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings:
+              'FILL' 0,
+              'wght' 400,
+              'GRAD' 0,
+              'opsz' 24
+        }
+        
+        /* Dock Styles */
+        .dock-outer {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .dock-panel {
+            display: flex;
+            align-items: flex-end;
+            gap: 1rem;
+            background: rgba(10, 10, 25, 0.9);
+            border: 1px solid #222;
+            border-radius: 1rem;
+            padding: 0.5rem 1rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .dock-item {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #060010;
+            border: 1px solid #222;
+            border-radius: 10px;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            flex-direction: column;
+        }
+
+        .dock-item:hover {
+            transform: scale(1.3);
+        }
+
+        .dock-item:hover .dock-icon {
+            color: #00E0FF;
+        }
+
+        .dock-icon {
+            color: #fff;
+            font-size: 24px;
+        }
+
+        .dock-label {
+            position: absolute;
+            top: -1.8rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #060010;
+            color: #fff;
+            border: 1px solid #222;
+            border-radius: 0.375rem;
+            padding: 0.2rem 0.5rem;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .dock-item:hover .dock-label {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-3px);
+        }
+
+        @media (max-width: 1024px) {
+            .dock-panel {
+                gap: 0.5rem;
+                padding: 0.4rem 0.8rem;
+            }
+            
+            .dock-item {
+                width: 45px;
+                height: 45px;
+            }
+            
+            .dock-icon {
+                font-size: 22px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dock-panel {
+                gap: 0.3rem;
+                padding: 0.3rem 0.6rem;
+            }
+            
+            .dock-item {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .dock-icon {
+                font-size: 20px;
+            }
+            
+            .dock-label {
+                font-size: 0.65rem;
+            }
+        }
+
+        /* Background */
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow-x: hidden;
+            background: #000;
+        }
+
+        /* Fixed Logo */
+        .fixed-logo {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            transition: all 0.3s ease;
+        }
+
+        .fixed-logo:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 4px 20px rgba(0, 255, 255, 0.3));
+        }
+
+        .fixed-logo a {
+            display: block;
+            line-height: 0;
+        }
+
+        .fixed-logo img {
+            height: 60px;
+            width: auto;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .fixed-logo {
+                top: 15px;
+                right: 15px;
+            }
+            
+            .fixed-logo img {
+                height: 50px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .fixed-logo {
+                top: 10px;
+                right: 10px;
+            }
+            
+            .fixed-logo img {
+                height: 40px;
+            }
+        }
+
+        /* Section Headings */
+        h1.section-title, h2.section-title {
+            font-size: 2.8rem !important;
+            font-weight: 700 !important;
+            background: linear-gradient(90deg, #00E0FF, #00bcd4) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            background-clip: text !important;
+        }
+
+        /* Media Cards */
+        .media-card {
+            background: rgba(12, 10, 20, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .media-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 25px rgba(0, 224, 255, 0.3);
+        }
+
+        .media-card video,
+        .media-card img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            background: #000;
+            max-height: 600px;
+        }
+
+        .media-card-content {
+            padding: 24px;
+        }
+
+        .media-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #00E0FF;
+            margin-bottom: 12px;
+        }
+
+        .media-card p {
+            font-size: 1rem;
+            color: #ccc;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            h1.section-title, h2.section-title {
+                font-size: 2rem !important;
+            }
+
+            .media-card video,
+            .media-card img {
+                max-height: 400px;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-background-dark font-display">
+    <!-- Fixed Logo -->
+    <div class="fixed-logo">
+        <a href="index.html">
+            <img src="images/logo.png" alt="KLE Logo">
+        </a>
+    </div>
+
+    <div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+        <main class="flex-1 px-4 md:px-10 lg:px-40 py-16">
+            <!-- Hero Section -->
+            <section class="py-16 text-center">
+                <h1 class="section-title mb-6">Technical Inspection & Team</h1>
+                <p class="text-gray-400 text-lg max-w-3xl mx-auto">
+                    Behind every successful flight is rigorous testing, dedicated teamwork, and precision engineering. 
+                    Explore our technical inspection process and meet the team that makes it all possible.
+                </p>
+            </section>
+
+            <!-- Technical Inspection Video -->
+            <section class="py-12">
+                <div class="media-card max-w-5xl mx-auto">
+                    <video controls class="w-full">
+                        <source src="videos/TI.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="media-card-content">
+                        <h3>Technical Inspection</h3>
+                        <p>
+                            Our comprehensive technical inspection process ensures every component meets 
+                            the highest standards of quality and performance. Watch as our team meticulously examines 
+                            each system, from avionics to structural integrity, guaranteeing flight-ready excellence.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Payload Drop Video -->
+            <section class="py-12">
+                <div class="media-card max-w-5xl mx-auto">
+                    <video controls class="w-full">
+                        <source src="videos/drop.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="media-card-content">
+                        <h3>Payload Dropping System</h3>
+                        <p>
+                            Witness our precision payload dropping mechanism in action. This advanced system 
+                            enables accurate delivery of supplies in emergency situations, search and rescue operations, 
+                            and humanitarian missions. The controlled release mechanism ensures safe and precise drops 
+                            from various altitudes.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Drone Image -->
+            <section class="py-12">
+                <div class="media-card max-w-5xl mx-auto">
+                    <img src="videos/drone.webp" alt="Drone">
+                    <div class="media-card-content">
+                        <h3>Our Drone Platform</h3>
+                        <p>
+                            Meet our flagship drone platform - a marvel of engineering combining cutting-edge 
+                            technology with robust design. Built for versatility and reliability, this platform serves as 
+                            the foundation for multiple mission profiles, from surveillance to emergency response. Every 
+                            component is carefully selected and integrated for optimal performance.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Team Photo -->
+            <section class="py-12">
+                <div class="media-card max-w-5xl mx-auto">
+                    <img src="videos/team.jpg" alt="Team">
+                    <div class="media-card-content">
+                        <h3>The Team Behind Innovation</h3>
+                        <p>
+                            Our diverse team of engineers, designers, and aviation experts brings together 
+                            decades of combined experience. United by a passion for innovation and excellence, we work 
+                            collaboratively to push the boundaries of what's possible in drone technology. From concept 
+                            to deployment, every team member plays a crucial role in our success.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mission Image -->
+            <section class="py-12">
+                <div class="media-card max-w-5xl mx-auto">
+                    <img src="videos/miss1.jpg" alt="Mission">
+                    <div class="media-card-content">
+                        <h3>Mission Ready</h3>
+                        <p>
+                            Every mission begins with thorough preparation and planning. Our team ensures 
+                            that each deployment is executed with precision, safety, and efficiency. From pre-flight 
+                            checks to post-mission analysis, we maintain the highest standards of operational excellence. 
+                            This image captures the moment before a critical mission, showcasing our commitment to 
+                            readiness and professionalism.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Navigation Dock -->
+    <div class="dock-outer">
+        <div class="dock-panel">
+            <!-- Home -->
+            <a href="./index.html" class="dock-item">
+                <div class="dock-icon"><span class="material-symbols-outlined">home</span></div>
+                <div class="dock-label">Home</div>
+            </a>
+            
+            <!-- Pitch -->
+            <a href="./pitch.html" class="dock-item">
+                <div class="dock-icon"><span class="material-symbols-outlined">airplanemode_active</span></div>
+                <div class="dock-label">Pitch</div>
+            </a>
+            
+            <!-- Software -->
+            <a href="./dashboard.html" class="dock-item">
+                <div class="dock-icon"><span class="material-symbols-outlined">code</span></div>
+                <div class="dock-label">Software</div>
+            </a>
+            
+            <!-- Flight Operations -->
+            <a href="./operations.html" class="dock-item">
+                <div class="dock-icon"><span class="material-symbols-outlined">flight_takeoff</span></div>
+                <div class="dock-label">Flight Operations</div>
+            </a>
+            
+            <!-- Technical -->
+            <a href="./technical.html" class="dock-item">
+                <div class="dock-icon"><span class="material-symbols-outlined">engineering</span></div>
+                <div class="dock-label">Technical</div>
+            </a>
+            
+            <!-- About Us -->
+            <a href="./aboutus.html" class="dock-item">
+                <div class="dock-icon"><span class="material-symbols-outlined">groups</span></div>
+                <div class="dock-label">About Us</div>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

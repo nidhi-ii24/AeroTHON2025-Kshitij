@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Operations - Aerothon 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    
+    <style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        #aurora-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -10;
+            pointer-events: none;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: -5;
+            pointer-events: none;
+        }
+
+        .hero-section {
+            height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 8vw;
+            line-height: 0.9;
+            letter-spacing: -2px;
+        }
+
+        .line {
+            overflow: hidden;
+        }
+
+        .word {
+            display: inline-block;
+            transform: translateY(100%);
+            opacity: 0;
+            animation: slideUp 0.6s forwards;
+            color: #fff;
+        }
+
+        .line:nth-child(1) .word {
+            animation-delay: 0.2s;
+        }
+
+        .line:nth-child(2) .word {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes slideUp {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .dock-outer {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .dock-panel {
+            display: flex;
+            align-items: flex-end;
+            gap: 1rem;
+            background: rgba(10, 10, 25, 0.9);
+            border: 1px solid #222;
+            border-radius: 1rem;
+            padding: 0.5rem 1rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .dock-item {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #060010;
+            border: 1px solid #222;
+            border-radius: 10px;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .dock-item:hover {
+            transform: scale(1.3);
+        }
+
+        .dock-icon {
+            color: white;
+            font-size: 24px;
+        }
+
+        .dock-label {
+            position: absolute;
+            top: -1.8rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #060010;
+            color: #fff;
+            border: 1px solid #222;
+            border-radius: 0.375rem;
+            padding: 0.2rem 0.5rem;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .dock-item:hover .dock-label {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-3px);
+        }
+
+        .video-card {
+            background: rgba(12, 10, 20, 0.8);
+            border: 1px solid rgba(0, 255, 255, 0.25);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .video-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .video-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+            border-color: rgba(0, 255, 255, 0.6);
+        }
+
+        .video-placeholder {
+            width: 100%;
+            height: 350px;
+            background: #060010;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border-bottom: 1px solid #222;
+        }
+
+        .logs-container {
+            background: rgba(12, 10, 20, 0.8);
+            border: 1px solid rgba(0, 255, 255, 0.25);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .logs-container.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .logs-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .logs-table th {
+            background: rgba(0, 255, 255, 0.1);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid rgba(0, 255, 255, 0.3);
+        }
+
+        .logs-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(132, 0, 255, 0.1);
+        }
+
+        .logs-table tr:hover {
+            background: rgba(0, 255, 255, 0.05);
+        }
+
+        /* Status Badges (in table cells) */
+.status-badge {
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.status-success {
+    background: rgba(34, 197, 94, 0.2);
+    color: #4ade80;
+    border: 1px solid rgba(34, 197, 94, 0.4);
+}
+
+.status-warning {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+    border: 1px solid rgba(251, 191, 36, 0.4);
+}
+
+.status-error {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.status-info {
+    background: rgba(59, 130, 246, 0.2);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.4);
+}
+
+/* Log Type Badges (SUCCESS, WARNING, ERROR, INFO) */
+.log-badge {
+    display: inline-block;
+    padding: 0.35rem 0.9rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.log-success {
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.log-warning {
+    background: rgba(251, 191, 36, 0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.log-error {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.log-info {
+    background: rgba(59, 130, 246, 0.15);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+/* Filter Buttons */
+.filter-btn {
+    padding: 0.8rem 1.5rem;
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    border-radius: 25px;
+    background: rgba(12, 10, 20, 0.8);
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filter-btn:hover {
+    background: rgba(0, 255, 255, 0.1);
+    border-color: rgba(0, 255, 255, 0.5);
+    transform: translateY(-2px);
+}
+
+.filter-btn.active {
+    background: rgba(0, 255, 255, 0.2);
+    border-color: #00FFFF;
+    color: #00FFFF;
+    transform: translateY(-2px);
+}
+
+.filter-btn .material-symbols-outlined {
+    font-size: 20px;
+}
+
+/* Hidden rows */
+tr[style*="display: none"] {
+    display: none !important;
+}
+
+        .metric-card {
+            background: rgba(12, 10, 20, 0.8);
+            border: 1px solid rgba(0, 255, 255, 0.25);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .metric-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .metric-card:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.4);
+            border-color: rgba(0, 255, 255, 0.6);
+        }
+
+        .metric-value {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .metric-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .ml-section {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(59, 130, 246, 0.2) 100%);
+            border: 1px solid rgba(132, 0, 255, 0.3);
+            border-radius: 20px;
+            padding: 3rem;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .ml-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #fff;
+            position: relative;
+            padding-top: 2rem;
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 12vw;
+            }
+        }
+
+        .ml-section {
+    background: linear-gradient(135deg, rgba(0, 224, 255, 0.2) 0%, rgba(0, 188, 212, 0.2) 100%); /* was purple/blue */
+    border: 1px solid rgba(0, 255, 255, 0.3); /* was purple */
+}
+
+/* Video placeholder icon */
+.video-placeholder span {
+    color: rgba(0, 255, 255, 0.5); /* was purple */
+}
+
+/* Badges */
+span.bg-purple-500\/20 {
+    background: rgba(0, 255, 255, 0.2) !important;
+}
+
+/* Fixed Logo in Top Right Corner - Clean Version */
+.fixed-logo {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    transition: all 0.3s ease;
+}
+
+.fixed-logo:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(0 4px 20px rgba(0, 255, 255, 0.3));
+}
+
+.fixed-logo a {
+    display: block;
+    line-height: 0;
+}
+
+.fixed-logo img {
+    height: 60px;
+    width: auto;
+    display: block;
+}
+
+/* Responsive sizing */
+@media (max-width: 768px) {
+    .fixed-logo {
+        top: 15px;
+        right: 15px;
+    }
+    
+    .fixed-logo img {
+        height: 50px;
+    }
+}
+
+@media (max-width: 480px) {
+    .fixed-logo {
+        top: 10px;
+        right: 10px;
+    }
+    
+    .fixed-logo img {
+        height: 40px;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="fixed-logo">
+    <a href="index.html">
+      <img src="images/logo.png" alt="KLE Logo">
+    </a>
+  </div>
+    <canvas id="aurora-bg"></canvas>
+
+    <section class="hero-section">
+        <div class="text-center px-4">
+            <div class="hero-title">
+                <div class="line"><span class="word">FLIGHT</span></div>
+                <div class="line"><span class="word">OPERATIONS</span></div>
+            </div>
+            <p class="text-xl text-gray-300 mt-6">Comprehensive documentation of our 80+ test flights and real-time analysis</p>
+        </div>
+    </section>
+
+    <section class="py-16 px-4" id="videos">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="section-title">Flight Videos</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="video-card">
+                    <div class="video-placeholder">
+                        <video width="100%" autoplay muted loop playsinline>
+                            <source src="videos/operations/payload.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold mb-2">Payload Drop</h3>
+                        <p class="text-gray-400 mb-4 text-sm">Initial test flight of our payload drop accuracy</p>
+                        <div class="flex gap-3 flex-wrap text-xs text-gray-500">
+                            <span class="bg-purple-500/20 px-2 py-1 rounded-full">Duration: 3:24</span>
+                            <span class="bg-purple-500/20 px-2 py-1 rounded-full">Altitude: 15m</span>
+                            <span class="bg-purple-500/20 px-2 py-1 rounded-full">Oct 26</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="video-card">
+                    <div class="video-placeholder">
+                        <video width="100%" autoplay muted loop playsinline>
+                            <source src="videos/operations/manual.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold mb-2">Obstacle Avoidance</h3>
+                        <p class="text-gray-400 mb-4 text-sm">Cones used as obstacles with precise payload drop targeting</p>
+                        <div class="flex gap-3 flex-wrap text-xs text-gray-500">
+                            <span class="bg-purple-500/20 px-2 py-1 rounded-full">Duration: 4:35</span>
+                            <span class="bg-purple-500/20 px-2 py-1 rounded-full">Altitude: 15m</span>
+                            <span class="bg-purple-500/20 px-2 py-1 rounded-full">Nov 2</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="video-card">
+                    <div class="video-placeholder">
+                        <video width="100%" autoplay muted loop playsinline>
+                            <source src="videos/operations/api-upd.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold mb-2">API Integration</h3>
+                        <p class="text-gray-400 mb-4 text-sm">Testing of API key for detection and counting</p>
+                        <div class="flex gap-3 flex-wrap text-xs text-gray-500">
+                            <span class="bg-purple-500/20 px-2 py-1 rounded-full">Duration: 1:05</span>
+                            <span class="bg-purple-500/20 px-2 py-1 rounded-full">Altitude: 15m</span>
+                            <span class="bg-purple-500/20 px-2 py-1 rounded-full">Oct 27</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="video-card">
+                    <div class="video-placeholder">
+                        <video width="100%" autoplay muted loop playsinline>
+                            <source src="videos/operations/ml.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold mb-2">ML Object Detection</h3>
+                        <p class="text-gray-400 mb-4 text-sm">Demonstration of our ML model detection and clustering algorithm</p>
+                        <div class="flex gap-3 flex-wrap text-xs text-gray-500">
+                            <span class="bg-purple-500/20 px-2 py-1 rounded-full">Duration: 4:33</span>
+                            <span class="bg-purple-500/20 px-2 py-1 rounded-full">Accuracy: 94.2%</span>
+                            <span class="bg-purple-500/20 px-2 py-1 rounded-full">Nov 1</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<section class="py-16 px-4" id="logs">
+    <div class="max-w-7xl mx-auto">
+        <h2 class="section-title">Flight Logs</h2>
+        <div class="logs-container">
+            <!-- Enhanced Filter Buttons -->
+            <div class="flex gap-3 mb-6 flex-wrap">
+                <button class="filter-btn active" onclick="filterLogs('all')">
+                    <span class="material-symbols-outlined">filter_list</span>
+                    All Flights
+                </button>
+                <button class="filter-btn" onclick="filterLogs('successful')">
+                    <span class="material-symbols-outlined">check_circle</span>
+                    Successful
+                </button>
+                <button class="filter-btn" onclick="filterLogs('warning')">
+                    <span class="material-symbols-outlined">warning</span>
+                    Warnings
+                </button>
+                <button class="filter-btn" onclick="filterLogs('error')">
+                    <span class="material-symbols-outlined">error</span>
+                    Errors
+                </button>
+                <button class="filter-btn" onclick="filterLogs('info')">
+                    <span class="material-symbols-outlined">info</span>
+                    Info
+                </button>
+                <button class="filter-btn" onclick="filterLogs('recent')">
+                    <span class="material-symbols-outlined">schedule</span>
+                    Recent
+                </button>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="logs-table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Flight #</th>
+                            <th>Date</th>
+                            <th>Duration</th>
+                            <th>Objectives</th>
+                            <th>Status</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="flight-logs">
+                        <!-- FL-001 -->
+                        <tr data-status="successful" data-type="success" data-date="2025-10-26">
+                            <td><span class="log-badge log-success">SUCCESS</span></td>
+                            <td>FL-001</td>
+                            <td>2025-10-26</td>
+                            <td>4:30</td>
+                            <td>Zone Detection & Object Count</td>
+                            <td><span class="status-badge status-success">Successful</span></td>
+                            <td>Detected all zones, accurate object counting</td>
+                        </tr>
+                        
+                        <!-- FL-003 -->
+                        <tr data-status="successful" data-type="success" data-date="2025-10-26">
+                            <td><span class="log-badge log-success">SUCCESS</span></td>
+                            <td>FL-003</td>
+                            <td>2025-10-26</td>
+                            <td>4:20</td>
+                            <td>Multi-zone Detection & Payload</td>
+                            <td><span class="status-badge status-success">Successful</span></td>
+                            <td>All zones detected, payload dropped accurately</td>
+                        </tr>
+                        
+                        <!-- FL-005 - WARNING -->
+                        <tr data-status="warning" data-type="warning" data-date="2025-10-28">
+                            <td><span class="log-badge log-warning">WARNING</span></td>
+                            <td>FL-005</td>
+                            <td>2025-10-28</td>
+                            <td>3:45</td>
+                            <td>GPS Stability Test</td>
+                            <td><span class="status-badge status-warning">Completed</span></td>
+                            <td>GPS drift detected (+2.5m), RTL accuracy degraded, recalibration recommended</td>
+                        </tr>
+                        
+                        <!-- FL-006 -->
+                        <tr data-status="successful" data-type="success" data-date="2025-10-29">
+                            <td><span class="log-badge log-success">SUCCESS</span></td>
+                            <td>FL-006</td>
+                            <td>2025-10-29</td>
+                            <td>4:28</td>
+                            <td>RTDETR Model Test</td>
+                            <td><span class="status-badge status-success">Successful</span></td>
+                            <td>Disaster detected, accurate payload drop, RTL < 1m</td>
+                        </tr>
+                        
+                        <!-- FL-007 -->
+                        <tr data-status="successful" data-type="success" data-date="2025-10-31">
+                            <td><span class="log-badge log-success">SUCCESS</span></td>
+                            <td>FL-007</td>
+                            <td>2025-10-31</td>
+                            <td>4:45</td>
+                            <td>Dual Zone Alignment</td>
+                            <td><span class="status-badge status-success">Successful</span></td>
+                            <td>Both zones detected, objects counted, survivor identified</td>
+                        </tr>
+                        
+                        <!-- FL-008 -->
+                        <tr data-status="successful" data-type="success" data-date="2025-10-31">
+                            <td><span class="log-badge log-success">SUCCESS</span></td>
+                            <td>FL-008</td>
+                            <td>2025-10-31</td>
+                            <td>4:22</td>
+                            <td>Disaster Zone Detection</td>
+                            <td><span class="status-badge status-success">Successful</span></td>
+                            <td>Disaster detected, payload dropped accurately</td>
+                        </tr>
+                        
+                        <!-- FL-009 - ERROR -->
+                        <tr data-status="error" data-type="error" data-date="2025-10-31">
+                            <td><span class="log-badge log-error">ERROR</span></td>
+                            <td>FL-009</td>
+                            <td>2025-10-31</td>
+                            <td>1:15</td>
+                            <td>Autonomous Navigation</td>
+                            <td><span class="status-badge status-error">Failed</span></td>
+                            <td>ESC failure on motor 3, emergency landing triggered, drone recovered safely</td>
+                        </tr>
+                        
+                        <!-- FL-010 -->
+                        <tr data-status="successful" data-type="success" data-date="2025-11-01">
+                            <td><span class="log-badge log-success">SUCCESS</span></td>
+                            <td>FL-010</td>
+                            <td>2025-11-01</td>
+                            <td>4:47</td>
+                            <td>Autonomous Path</td>
+                            <td><span class="status-badge status-success">Successful</span></td>
+                            <td>Full autonomous mission, RTL on H-pad</td>
+                        </tr>
+                        
+                        <!-- FL-011 -->
+                        <tr data-status="successful" data-type="success" data-date="2025-11-01">
+                            <td><span class="log-badge log-success">SUCCESS</span></td>
+                            <td>FL-011</td>
+                            <td>2025-11-01</td>
+                            <td>6:12</td>
+                            <td>Extended Autonomous Mission</td>
+                            <td><span class="status-badge status-success">Successful</span></td>
+                            <td>Complete autonomous path executed successfully</td>
+                        </tr>
+                        
+                        <!-- FL-012 -->
+                        <tr data-status="successful" data-type="success" data-date="2025-11-02">
+                            <td><span class="log-badge log-success">SUCCESS</span></td>
+                            <td>FL-012</td>
+                            <td>2025-11-02</td>
+                            <td>4:34</td>
+                            <td>Zone Detection & RTL</td>
+                            <td><span class="status-badge status-success">Successful</span></td>
+                            <td>Perfect RTL landing on H-pad, both zones detected</td>
+                        </tr>
+                        
+                        <!-- FL-013 -->
+                        <tr data-status="successful" data-type="success" data-date="2025-11-02">
+                            <td><span class="log-badge log-success">SUCCESS</span></td>
+                            <td>FL-013</td>
+                            <td>2025-11-02</td>
+                            <td>4:40</td>
+                            <td>Disaster Response</td>
+                            <td><span class="status-badge status-success">Successful</span></td>
+                            <td>Disaster detected, payload dropped accurately</td>
+                        </tr>
+                        
+                        <!-- FL-014 - WARNING -->
+                        <tr data-status="warning" data-type="warning" data-date="2025-11-02">
+                            <td><span class="log-badge log-warning">WARNING</span></td>
+                            <td>FL-014</td>
+                            <td>2025-11-02</td>
+                            <td>4:10</td>
+                            <td>Battery Endurance Test</td>
+                            <td><span class="status-badge status-warning">Completed</span></td>
+                            <td>Low battery triggered at 18%, RTL initiated 30s early, safe landing confirmed</td>
+                        </tr>
+                        
+                        <!-- FL-015 - INFO -->
+                        <tr data-status="info" data-type="info" data-date="2025-11-02">
+                            <td><span class="log-badge log-info">INFO</span></td>
+                            <td>FL-015</td>
+                            <td>2025-11-02</td>
+                            <td>2:30</td>
+                            <td>Camera Calibration</td>
+                            <td><span class="status-badge status-info">Testing</span></td>
+                            <td>FPV camera calibration completed, gimbal stabilization tested, recording quality verified</td>
+                        </tr>
+                        
+                        <!-- FL-016 - ERROR -->
+                        <tr data-status="error" data-type="error" data-date="2025-11-02">
+                            <td><span class="log-badge log-error">ERROR</span></td>
+                            <td>FL-016</td>
+                            <td>2025-11-02</td>
+                            <td>0:45</td>
+                            <td>Telemetry Link Test</td>
+                            <td><span class="status-badge status-error">Aborted</span></td>
+                            <td>Herelink signal loss at 800m, failsafe RTL activated, connection restored at 400m</td>
+                        </tr>
+                        
+                        <!-- FL-017 -->
+                        <tr data-status="successful" data-type="success" data-date="2025-11-02">
+                            <td><span class="log-badge log-success">SUCCESS</span></td>
+                            <td>FL-017</td>
+                            <td>2025-11-02</td>
+                            <td>4:35</td>
+                            <td>Full Mission Execution</td>
+                            <td><span class="status-badge status-success">Successful</span></td>
+                            <td>Zone detected, survivor found, RTL accuracy 55cm</td>
+                        </tr>
+                        
+                        <!-- FL-018 -->
+                        <tr data-status="successful" data-type="success" data-date="2025-11-02">
+                            <td><span class="log-badge log-success">SUCCESS</span></td>
+                            <td>FL-018</td>
+                            <td>2025-11-02</td>
+                            <td>4:28</td>
+                            <td>Comprehensive Detection</td>
+                            <td><span class="status-badge status-success">Successful</span></td>
+                            <td>All zones detected, disaster identified, RTL on H-pad</td>
+                        </tr>
+                        
+                        <!-- FL-019 - WARNING -->
+                        <tr data-status="warning" data-type="warning" data-date="2025-11-03">
+                            <td><span class="log-badge log-warning">WARNING</span></td>
+                            <td>FL-019</td>
+                            <td>2025-11-03</td>
+                            <td>3:50</td>
+                            <td>Wind Resistance Test</td>
+                            <td><span class="status-badge status-warning">Completed</span></td>
+                            <td>High wind detected (12 m/s), position hold unstable, manual control required for landing</td>
+                        </tr>
+                        
+                        <!-- FL-020 - INFO -->
+                        <tr data-status="info" data-type="info" data-date="2025-11-03">
+                            <td><span class="log-badge log-info">INFO</span></td>
+                            <td>FL-020</td>
+                            <td>2025-11-03</td>
+                            <td>3:15</td>
+                            <td>PID Tuning Session</td>
+                            <td><span class="status-badge status-info">Testing</span></td>
+                            <td>Pitch/Roll PID values adjusted, improved stability observed, awaiting validation flight</td>
+                        </tr>
+                        
+                        <!-- FL-021 - ERROR -->
+                        <tr data-status="error" data-type="error" data-date="2025-11-03">
+                            <td><span class="log-badge log-error">ERROR</span></td>
+                            <td>FL-021</td>
+                            <td>2025-11-03</td>
+                            <td>1:30</td>
+                            <td>Payload Release Mechanism</td>
+                            <td><span class="status-badge status-error">Failed</span></td>
+                            <td>Electromagnetic release malfunction, payload stuck, manual intervention required post-landing</td>
+                        </tr>
+                        
+                        <!-- FL-022 -->
+                        <tr data-status="successful" data-type="success" data-date="2025-11-03">
+                            <td><span class="log-badge log-success">SUCCESS</span></td>
+                            <td>FL-022</td>
+                            <td>2025-11-03</td>
+                            <td>3:00</td>
+                            <td>Zone Detection & Payload</td>
+                            <td><span class="status-badge status-success">Successful</span></td>
+                            <td>Victim identified, payload drop, RTL 0.75m</td>
+                        </tr>
+                        
+                        <!-- FL-023 -->
+                        <tr data-status="successful" data-type="success" data-date="2025-11-03">
+                            <td><span class="log-badge log-success">SUCCESS</span></td>
+                            <td>FL-023</td>
+                            <td>2025-11-03</td>
+                            <td>3:00</td>
+                            <td>Mission Execution</td>
+                            <td><span class="status-badge status-success">Successful</span></td>
+                            <td>Full mission successful, RTL accuracy 1m</td>
+                        </tr>
+                        
+                        <!-- FL-024 -->
+                        <tr data-status="successful" data-type="success" data-date="2025-11-03">
+                            <td><span class="log-badge log-success">SUCCESS</span></td>
+                            <td>FL-024</td>
+                            <td>2025-11-03</td>
+                            <td>3:07</td>
+                            <td>Zone Detection & Counting</td>
+                            <td><span class="status-badge status-success">Successful</span></td>
+                            <td>Both zones detected, perfect object count</td>
+                        </tr>
+                        
+                        <!-- FL-025 -->
+                        <tr data-status="successful" data-type="success" data-date="2025-11-03">
+                            <td><span class="log-badge log-success">SUCCESS</span></td>
+                            <td>FL-025</td>
+                            <td>2025-11-03</td>
+                            <td>3:08</td>
+                            <td>Dataset Collection</td>
+                            <td><span class="status-badge status-success">Successful</span></td>
+                            <td>Swimming pool dataset collected, zones detected</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+// Enhanced Log Filtering
+function filterLogs(filter) {
+    const rows = document.querySelectorAll('#flight-logs tr');
+    const buttons = document.querySelectorAll('.filter-btn');
+    
+    // Update active button
+    buttons.forEach(btn => btn.classList.remove('active'));
+    event.target.closest('.filter-btn').classList.add('active');
+    
+    // Get current date for recent filter
+    const currentDate = new Date();
+    const recentThreshold = new Date('2025-11-02');
+    
+    rows.forEach(row => {
+        const status = row.getAttribute('data-status');
+        const type = row.getAttribute('data-type');
+        const dateStr = row.getAttribute('data-date');
+        const rowDate = new Date(dateStr);
+        
+        let shouldShow = false;
+        
+        switch(filter) {
+            case 'all':
+                shouldShow = true;
+                break;
+            case 'successful':
+                shouldShow = (status === 'successful');
+                break;
+            case 'warning':
+                shouldShow = (type === 'warning');
+                break;
+            case 'error':
+                shouldShow = (type === 'error');
+                break;
+            case 'info':
+                shouldShow = (type === 'info');
+                break;
+            case 'recent':
+                shouldShow = (rowDate >= recentThreshold);
+                break;
+        }
+        
+        row.style.display = shouldShow ? '' : 'none';
+    });
+}
+</script>
+
+
+    <section class="py-16 px-4" id="metrics">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="section-title">Flight Performance Metrics</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="metric-card">
+                    <div class="metric-icon">🎯</div>
+                    <div class="metric-value">96%</div>
+                    <div class="text-gray-400 text-lg">Mission Success Rate</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">⏱️</div>
+                    <div class="metric-value">80+</div>
+                    <div class="text-gray-400 text-lg">Total Flights</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">📍</div>
+                    <div class="metric-value">30m</div>
+                    <div class="text-gray-400 text-lg">Max Altitude</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">🔋</div>
+                    <div class="metric-value">~13min</div>
+                    <div class="text-gray-400 text-lg">Max Flight Duration</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<!-- ===== Floating Dock Bar ===== -->
+<div class="dock-outer">
+  <div class="dock-panel">
+    <!-- Home -->
+    <a href="./index.html" class="dock-item">
+      <div class="dock-icon"><span class="material-symbols-outlined">home</span></div>
+      <div class="dock-label">Home</div>
+    </a>
+    
+    <!-- Pitch -->
+    <a href="./pitch.html" class="dock-item">
+      <div class="dock-icon"><span class="material-symbols-outlined">airplanemode_active</span></div>
+      <div class="dock-label">Pitch</div>
+    </a>
+    
+    <!-- Software -->
+    <a href="./dashboard.html" class="dock-item">
+      <div class="dock-icon"><span class="material-symbols-outlined">code</span></div>
+      <div class="dock-label">Software</div>
+    </a>
+    
+    <!-- Flight Operations -->
+    <a href="./operations.html" class="dock-item">
+      <div class="dock-icon"><span class="material-symbols-outlined">flight_takeoff</span></div>
+      <div class="dock-label">Flight Operations</div>
+    </a>
+    
+    <!-- Technical -->
+    <a href="./technical.html" class="dock-item">
+      <div class="dock-icon"><span class="material-symbols-outlined">engineering</span></div>
+      <div class="dock-label">Technical</div>
+    </a>
+    
+    <!-- About Us -->
+    <a href="./aboutus.html" class="dock-item">
+      <div class="dock-icon"><span class="material-symbols-outlined">groups</span></div>
+      <div class="dock-label">About Us</div>
+    </a>
+  </div>
+</div>
+
+    <script type="module">
+        import { Renderer, Program, Mesh, Color, Triangle } from 'https://cdn.skypack.dev/ogl';
+
+        const VERT = `#version 300 es
+        in vec2 position;
+        void main() { gl_Position = vec4(position, 0.0, 1.0); }`;
+
+        const FRAG = `#version 300 es
+        precision highp float;
+        uniform float uTime;
+        uniform float uAmplitude;
+        uniform vec3 uColorStops[3];
+        uniform vec2 uResolution;
+        uniform float uBlend;
+        out vec4 fragColor;
+        vec3 permute(vec3 x){return mod(((x*34.0)+1.0)*x,289.0);}
+        float snoise(vec2 v){const vec4 C=vec4(0.211324865405187,0.366025403784439,-0.577350269189626,0.024390243902439);
+        vec2 i=floor(v+dot(v,C.yy));vec2 x0=v-i+dot(i,C.xx);
+        vec2 i1=(x0.x>x0.y)?vec2(1.0,0.0):vec2(0.0,1.0);
+        vec4 x12=x0.xyxy+C.xxzz;x12.xy-=i1;i=mod(i,289.0);
+        vec3 p=permute(permute(i.y+vec3(0.0,i1.y,1.0))+i.x+vec3(0.0,i1.x,1.0));
+        vec3 m=max(0.5-vec3(dot(x0,x0),dot(x12.xy,x12.xy),dot(x12.zw,x12.zw)),0.0);
+        m=m*m;m=m*m;
+        vec3 x=2.0*fract(p*C.www)-1.0;
+        vec3 h=abs(x)-0.5;vec3 ox=floor(x+0.5);
+        vec3 a0=x-ox;m*=1.79284291400159-0.85373472095314*(a0*a0+h*h);
+        vec3 g;g.x=a0.x*x0.x+h.x*x0.y;g.yz=a0.yz*x12.xz+h.yz*x12.yw;
+        return 130.0*dot(m,g);}
+        struct ColorStop{vec3 color;float position;};
+        #define COLOR_RAMP(colors,factor,finalColor){int index=0;for(int i=0;i<2;i++){ColorStop c=colors[i];bool between=c.position<=factor;index=int(mix(float(index),float(i),float(between)));}ColorStop c=colors[index];ColorStop n=colors[index+1];float range=n.position-c.position;float lerpF=(factor-c.position)/range;finalColor=mix(c.color,n.color,lerpF);}
+        void main(){
+            vec2 uv=gl_FragCoord.xy/uResolution;
+            ColorStop colors[3];
+            colors[0]=ColorStop(uColorStops[0],0.0);
+            colors[1]=ColorStop(uColorStops[1],0.5);
+            colors[2]=ColorStop(uColorStops[2],1.0);
+            vec3 rampColor;COLOR_RAMP(colors,uv.x,rampColor);
+            float height=snoise(vec2(uv.x*2.0+uTime*0.1,uTime*0.25))*0.5*uAmplitude;
+            height=exp(height);height=(uv.y*2.0-height+0.2);
+            float intensity=0.6*height;
+            float midPoint=0.20;
+            float auroraAlpha=smoothstep(midPoint-uBlend*0.5,midPoint+uBlend*0.5,intensity);
+            vec3 auroraColor=intensity*rampColor;
+            fragColor=vec4(auroraColor*auroraAlpha,auroraAlpha);
+        }`;
+
+        const canvas = document.getElementById('aurora-bg');
+        const renderer = new Renderer({ canvas, alpha: true, premultipliedAlpha: true });
+        const gl = renderer.gl;
+        gl.clearColor(0, 0, 0, 0);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+
+        const geometry = new Triangle(gl);
+        if (geometry.attributes.uv) delete geometry.attributes.uv;
+
+        const colorStopsArray = ["#3A29FF", "#EDF1F2", "#00E0FF"].map(hex => {
+            const c = new Color(hex);
+            return [c.r, c.g, c.b];
+        });
+
+        const program = new Program(gl, {
+            vertex: VERT,
+            fragment: FRAG,
+            uniforms: {
+                uTime: { value: 0 },
+                uAmplitude: { value: 1.0 },
+                uColorStops: { value: colorStopsArray },
+                uResolution: { value: [window.innerWidth, window.innerHeight] },
+                uBlend: { value: 0.5 }
+            }
+        });
+
+        const mesh = new Mesh(gl, { geometry, program });
+
+        function resize() {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            program.uniforms.uResolution.value = [window.innerWidth, window.innerHeight];
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+
+        function animate(t) {
+            requestAnimationFrame(animate);
+            program.uniforms.uTime.value = t * 0.001;
+            renderer.render({ scene: mesh });
+        }
+        animate(0);
+    </script>
+
+    <script>
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, index * 100);
+                }
+            });
+        }, observerOptions);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.video-card, .metric-card, .ml-section, .logs-container').forEach(el => {
+                observer.observe(el);
+            });
+        });
+
+        function filterLogs(filter) {
+            const rows = document.querySelectorAll('#flight-logs tr');
+            const buttons = document.querySelectorAll('.filter-btn');
+            
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            rows.forEach(row => {
+                const status = row.getAttribute('data-status');
+                const date = new Date(row.cells[1].textContent);
+                const isRecent = (new Date() - date) < (30 * 24 * 60 * 60 * 1000);
+                
+                let show = false;
+                switch(filter) {
+                    case 'all':
+                        show = true;
+                        break;
+                    case 'successful':
+                        show = status === 'successful';
+                        break;
+                    case 'recent':
+                        show = isRecent;
+                        break;
+                }
+                
+                row.style.display = show ? '' : 'none';
+            });
+        }
+
+        function scrollToSection(id) {
+            if (id === 'home') {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                const el = document.getElementById(id);
+                if (el) {
+                    window.scrollTo({ top: el.offsetTop - 60, behavior: 'smooth' });
+                }
+            }
+        }
+    </script>
+
+    <script>
+// Add scroll effect to logo
+window.addEventListener('scroll', function() {
+    const logo = document.querySelector('.fixed-logo');
+    if (window.scrollY > 100) {
+        logo.classList.add('scrolled');
+    } else {
+        logo.classList.remove('scrolled');
+    }
+});
+</script>
+
+<script>
+// Enhanced Log Filtering - Fixed Version
+function filterLogs(filter) {
+    const rows = document.querySelectorAll('#flight-logs tr');
+    const buttons = document.querySelectorAll('.filter-btn');
+    
+    // Update active button
+    buttons.forEach(btn => {
+        btn.classList.remove('active');
+        // Check if button's onclick matches current filter
+        const btnFilter = btn.getAttribute('onclick').match(/'([^']+)'/)[1];
+        if (btnFilter === filter) {
+            btn.classList.add('active');
+        }
+    });
+    
+    // Get current date for recent filter
+    const recentThreshold = new Date('2025-11-02');
+    
+    rows.forEach(row => {
+        const status = row.getAttribute('data-status');
+        const type = row.getAttribute('data-type');
+        const dateStr = row.getAttribute('data-date');
+        const rowDate = dateStr ? new Date(dateStr) : null;
+        
+        let shouldShow = false;
+        
+        switch(filter) {
+            case 'all':
+                shouldShow = true;
+                break;
+            case 'successful':
+                shouldShow = (status === 'successful' || type === 'success');
+                break;
+            case 'warning':
+                shouldShow = (status === 'warning' || type === 'warning');
+                break;
+            case 'error':
+                shouldShow = (status === 'error' || type === 'error');
+                break;
+            case 'info':
+                shouldShow = (status === 'info' || type === 'info');
+                break;
+            case 'recent':
+                shouldShow = rowDate && (rowDate >= recentThreshold);
+                break;
+        }
+        
+        row.style.display = shouldShow ? '' : 'none';
+    });
+}
+
+// Initialize with all logs shown
+document.addEventListener('DOMContentLoaded', function() {
+    filterLogs('all');
+});
+</script>
+
+<!-- Error Handling Script -->
+<script src="js/error-handling.js"></script>
+
+<!-- Accessibility Enhancements Script -->
+<script src="js/accessibility-enhancements.js"></script>
+0
+</body>
+</html>
+
+

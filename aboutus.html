@@ -1,0 +1,2065 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>About Us - aeroKLE</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/SplitText.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/TextPlugin.min.js"></script>
+
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#00ffff",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#111418",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.75rem",
+                        "xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+     <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24
+      }
+    </style>
+<style>
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .glassmorphism img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            object-fit: cover;
+            object-position: center;
+        }
+        
+        /* Center last row with 3 items in 4-column grid */
+        @media (min-width: 1024px) {
+            /* Center the last 3 items by positioning them in columns 2-4 */
+            .team-grid > :nth-child(14) {
+                grid-column-start: 2;
+            }
+            .team-grid > :nth-child(15) {
+                grid-column-start: 3;
+            }
+            .team-grid > :nth-child(16) {
+                grid-column-start: 4;
+            }
+        }
+        
+        /* Team Member Grid Mobile Responsive Styles */
+        .team-grid {
+            grid-template-columns: repeat(1, 1fr);
+        }
+        
+        @media (min-width: 768px) {
+            .team-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .team-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .content-section {
+                padding: 60px 30px;
+            }
+            
+            .section-title {
+                font-size: 2rem !important;
+            }
+            
+            .section-subtitle {
+                font-size: 1rem;
+            }
+        }
+        
+        /* Touch Interaction Alternatives for Mobile */
+        @media (hover: none) and (pointer: coarse) {
+            /* Ensure touch targets are at least 44x44px */
+            .dock-item {
+                min-width: 44px;
+                min-height: 44px;
+            }
+            
+            button, a {
+                min-height: 44px;
+                min-width: 44px;
+            }
+            
+            /* Touch-friendly active states */
+            .glassmorphism:active {
+                transform: scale(0.98);
+                transition: transform 0.1s ease;
+            }
+            
+            /* Show social links by default on mobile */
+            .team-member-card .social-links {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+    <style>
+.dock-outer {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  z-index: 9999;
+}
+
+.dock-panel {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  background: rgba(10, 10, 25, 0.9);
+  border: 1px solid #222;
+  border-radius: 1rem;
+  padding: 0.5rem 1rem;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.dock-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #060010;
+  border: 1px solid #222;
+  border-radius: 10px;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  flex-direction: column;
+}
+
+.dock-item:hover .dock-icon {
+  color: #00E0FF;
+}
+
+.dock-item:hover {
+  transform: scale(1.3);
+}
+
+.dock-icon {
+  color: white;
+  font-size: 24px;
+}
+
+.dock-label {
+  position: absolute;
+  top: -1.8rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #060010;
+  color: #fff;
+  border: 1px solid #222;
+  border-radius: 0.375rem;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.dock-item:hover .dock-label {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-3px);
+}
+
+/* Navigation Dock Mobile Responsive Styles */
+@media (max-width: 1024px) {
+  .dock-panel {
+    gap: 0.5rem;
+    padding: 0.4rem 0.8rem;
+  }
+  
+  .dock-item {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .dock-icon {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dock-panel {
+    gap: 0.3rem;
+    padding: 0.3rem 0.6rem;
+  }
+  
+  .dock-item {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .dock-icon {
+    font-size: 20px;
+  }
+  
+  .dock-label {
+    font-size: 0.65rem;
+  }
+}
+
+/* Aurora Background Canvas */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-x: hidden;
+  background: #000; /* fallback base color */
+}
+
+#aurora-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -10;
+  pointer-events: none;
+}
+
+section,
+header,
+footer,
+.layout-container,
+.bg-background-dark,
+.bg-gray-900,
+.bg-gray-900\/50,
+.bg-background-light {
+  background: transparent !important;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4); /* adjust for text contrast */
+  z-index: -5;
+  pointer-events: none;
+}
+.core-slide {
+  position: absolute;
+  inset: 0;
+  background: black;
+  opacity: 0;
+  transform: scale(1.05);
+  transition: opacity 1s ease, transform 1.5s ease;
+}
+.core-slide::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: center / cover no-repeat var(--video);
+  background-image: var(--video);
+  filter: brightness(0.8);
+  z-index: 0;
+}
+.core-slide video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.core-slide.active {
+  opacity: 1;
+  transform: scale(1);
+  z-index: 5;
+}
+.overlay-content {
+  position: absolute;
+  bottom: 15%;
+  left: 10%;
+  z-index: 10;
+  max-width: 600px;
+  animation: fadeUp 1.5s ease both;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>
+<style>
+.list {
+  position: relative;
+  display: block;
+  width: 100%;
+  margin: 0 auto;
+  min-height: 400px;
+}
+.item-wrapper {
+  position: absolute;
+  overflow: hidden;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.item-img {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.4s ease, filter 0.4s ease;
+}
+.item-wrapper:hover .item-img {
+  transform: scale(1.05);
+}
+
+.shuffle-text {
+  visibility: hidden;
+  font-family: 'Press Start 2P', sans-serif;
+}
+
+/* Content Section Styling - Match Pitch Page */
+/* Gallery Section Styling */
+.content-section {
+    padding: 100px 60px;
+    background: var(--background-dark);
+    width: 100%;
+}
+
+.section-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.section-title {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #0d7ff2;
+    margin-bottom: 16px;
+    letter-spacing: -1px;
+}
+
+.section-subtitle {
+    font-size: 1.125rem;
+    color: rgba(255, 255, 255, 0.7);
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Masonry Gallery Styles */
+.masonry-container {
+    position: relative;
+    width: 100%;
+    min-height: 800px;
+    margin: 0 auto;
+}
+
+.masonry-item {
+    position: absolute;
+    overflow: hidden;
+    border-radius: 12px;
+    cursor: pointer;
+    opacity: 0;
+    will-change: transform, opacity;
+    padding: 8px; /* Add padding to create gap */
+    box-sizing: border-box;
+}
+
+.masonry-item-img {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.3s ease;
+    border-radius: 12px;
+}
+
+.masonry-item:hover .masonry-item-img {
+    transform: scale(1.05);
+}
+
+.masonry-item:hover {
+    z-index: 10;
+}
+
+/* Loading state */
+.masonry-container.loading {
+    opacity: 0.5;
+}
+/* Team member card hover effects */
+.team-member-card {
+    position: relative;
+}
+
+.team-member-card .social-links {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+}
+
+.team-member-card:hover .social-links {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Social icon hover effects */
+.team-member-card a svg {
+    transition: transform 0.2s ease;
+}
+
+.team-member-card a:hover svg {
+    transform: scale(1.2);
+}
+
+/* Match all main section headings to updated_home.html style */
+h1.text-28px, 
+h2.text-28px,
+h2.text-3xl,
+h2.text-4xl,
+.section-title {
+    font-size: 2.8rem !important;
+    font-weight: 700 !important;
+    background: linear-gradient(90deg, #00E0FF, #00bcd4) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    letter-spacing: -1px !important;
+}
+
+/* Specifically target About Us section headings */
+section h2.text-center,
+.section-wrapper h2 {
+    font-size: 2.8rem !important;
+    font-weight: 700 !important;
+    background: linear-gradient(90deg, #00E0FF, #00bcd4) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    letter-spacing: -1px !important;
+}
+
+/* Override any existing text-white classes on headings */
+h1, h2, h3 {
+    background: linear-gradient(90deg, #00E0FF, #00bcd4) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+}
+
+/* Ensure proper sizing for all main headings */
+section > h2,
+section > div > h2 {
+    font-size: 2.8rem !important;
+    font-weight: 700 !important;
+}
+/* Exclude the hero text from gradient - keep it white */
+#shuffle-kshitij,
+#shuffle-kshitij * {
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    -webkit-text-fill-color: white !important;
+    background-clip: unset !important;
+    color: white !important;
+}
+
+/* Alternative: Apply gradient but with visible colors */
+#shuffle-kshitij {
+    background: linear-gradient(90deg, #ffffff, #00FFFF) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+}
+
+/* Contact Form Styling */
+.contact-form-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: rgba(15, 15, 30, 0.6);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 8px 32px rgba(0, 255, 255, 0.1);
+}
+
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #00FFFF;
+    letter-spacing: 0.5px;
+}
+
+.form-group label .material-symbols-outlined {
+    font-size: 20px;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 14px 18px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    border-radius: 12px;
+    color: white;
+    font-size: 1rem;
+    font-family: 'Space Grotesk', sans-serif;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.08);
+    border-color: #00FFFF;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 150px;
+}
+
+.submit-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 16px 40px;
+    background: linear-gradient(135deg, #00FFFF 0%, #00bcd4 100%);
+    border: none;
+    border-radius: 12px;
+    color: #000;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0, 255, 255, 0.3);
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 255, 255, 0.5);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+}
+
+.submit-btn .material-symbols-outlined {
+    font-size: 22px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .contact-form-container {
+        padding: 30px 20px;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+/* Fixed Logo in Top Right Corner - Clean Version */
+.fixed-logo {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    transition: all 0.3s ease;
+}
+
+.fixed-logo:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(0 4px 20px rgba(0, 255, 255, 0.3));
+}
+
+.fixed-logo a {
+    display: block;
+    line-height: 0;
+}
+
+.fixed-logo img {
+    height: 60px;
+    width: auto;
+    display: block;
+}
+
+/* Responsive sizing */
+@media (max-width: 768px) {
+    .fixed-logo {
+        top: 15px;
+        right: 15px;
+    }
+    
+    .fixed-logo img {
+        height: 50px;
+    }
+}
+
+@media (max-width: 480px) {
+    .fixed-logo {
+        top: 10px;
+        right: 10px;
+    }
+    
+    .fixed-logo img {
+        height: 40px;
+    }
+}
+
+</style>
+
+</head>
+<body class="bg-background-dark font-display">
+  <!-- Fixed Logo -->
+  <div class="fixed-logo">
+    <a href="index.html">
+      <img src="images/logo.png" alt="KLE Logo">
+    </a>
+  </div>
+  
+  <!-- Rest of your content -->
+
+  <canvas id="aurora-bg"></canvas>
+  <div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+
+    <div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+      <div class="layout-container flex h-full grow flex-col">
+        <main class="flex-1">
+          <section class="relative h-screen flex flex-col justify-center items-center text-center text-white" id="introduction">
+            <div class="absolute inset-0 bg-black/10">                
+                <img src="images/bg.jpg" alt="Drone Background" class="absolute top-0 left-0 w-full h-full object-cover -z-10"/>
+            </div>
+            <div class="relative z-10 px-4">
+              <h1 id="shuffle-kshitij" class="shuffle-text text-white text-5xl font-black leading-tight tracking-[-0.033em] @[480px]:text-6xl @[480px]:font-black @[480px]:leading-tight @[480px]:tracking-[-0.033em]">The Flight Deck</h1>
+              <p class="text-white/80 text-lg font-normal leading-normal max-w-4xl mx-auto mt-4 @[480px]:text-xl @[480px]:font-normal @[480px]:leading-normal">Rooted in rigorous engineering and hands-on innovation, aeroKLE develops UAVs that merge robust hardware, adaptive control, and cutting-edge autonomy. Our product line spans long-range gliders, compact reconnaissance drones, and intelligent multirotor systems.</p>
+              <a href="https://aerokle.in/" class="inline-flex mt-6 items-center justify-center px-6 py-3 bg-[#00E0FF] text-black font-semibold rounded-lg shadow-lg hover:bg-[#00bcd4] transition-all duration-300">
+                Learn More
+            </a>
+            </div>
+          </section>
+
+<section class="content-section">
+    <div class="section-wrapper">
+        <div class="section-header">
+            <h2 class="section-title">Meet the Innovators</h2>
+            <p class="section-subtitle">The minds behind aeroKLE's cutting-edge drone technology</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 team-grid">
+            <!-- Your existing team member cards -->
+            <div class="glassmorphism rounded-xl flex flex-col items-center p-6 text-center transition-all duration-300 hover:bg-white/20 group">
+    <img class="w-28 h-28 rounded-full mb-4 object-cover border-2 border-#aaa" 
+         src="images\2023\omprashanth.jpg" 
+         alt="Photo of Rohan Sharma"/>
+    <p class="text-white text-lg font-bold leading-tight">Om Prashanth R.</p>
+    <p class="text-primary text-sm font-medium">Captain</p>
+    <p class="text-white/70 text-xs mt-2">Mechanical</p>
+    
+    <!-- Social Links - will appear on hover -->
+    <div class="flex gap-3 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <a href="https://in.linkedin.com/in/om-prashanth-r-500883214" target="_blank" rel="noopener noreferrer" 
+           class="text-white/70 hover:text-primary transition-colors" title="LinkedIn">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+            </svg>
+        </a>
+        <a href="" target="_blank" rel="noopener noreferrer" 
+           class="text-white/70 hover:text-primary transition-colors" title="GitHub">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+        </a>
+    </div>
+</div>
+
+<div class="glassmorphism rounded-xl flex flex-col items-center p-6 text-center transition-all duration-300 hover:bg-white/20 group">
+    <img class="w-28 h-28 rounded-full mb-4 object-cover border-2 border-#aaa
+    " 
+         src="images\2024\adityab.png" 
+         alt="Photo of Rohan Sharma"/>
+    <p class="text-white text-lg font-bold leading-tight">Aditya Bagati</p>
+    <p class="text-primary text-sm font-medium">Design</p>
+    <p class="text-white/70 text-xs mt-2">Mechanical</p>
+    
+    <!-- Social Links - will appear on hover -->
+    <div class="flex gap-3 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <a href="https://www.linkedin.com/in/aditya-bagati-7a9a862a1" target="_blank" rel="noopener noreferrer" 
+           class="text-white/70 hover:text-primary transition-colors" title="LinkedIn">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+            </svg>
+        </a>
+        <a href="https://github.com/bagatiaditya" target="_blank" rel="noopener noreferrer" 
+           class="text-white/70 hover:text-primary transition-colors" title="GitHub">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+        </a>
+    </div>
+</div>
+
+<div class="glassmorphism rounded-xl flex flex-col items-center p-6 text-center transition-all duration-300 hover:bg-white/20 group">
+    <img class="w-28 h-28 rounded-full mb-4 object-cover border-2 border-#aaa" 
+         src="images\2025\adityarg.jpeg" 
+         alt="Photo of Rohan Sharma"/>
+    <p class="text-white text-lg font-bold leading-tight">Aditya Gavimath</p>
+    <p class="text-primary text-sm font-medium">Simulation</p>
+    <p class="text-white/70 text-xs mt-2">Avionics</p>
+    
+    <!-- Social Links - will appear on hover -->
+    <div class="flex gap-3 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <a href="https://www.linkedin.com/in/aditya-gavimath-7a1456332?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" rel="noopener noreferrer" 
+           class="text-white/70 hover:text-primary transition-colors" title="LinkedIn">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+            </svg>
+        </a>
+        <a href="https://github.com/ADITYAGAVIMATH" target="_blank" rel="noopener noreferrer" 
+           class="text-white/70 hover:text-primary transition-colors" title="GitHub">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+        </a>
+    </div>
+</div>
+
+<div class="glassmorphism rounded-xl flex flex-col items-center p-6 text-center transition-all duration-300 hover:bg-white/20 group">
+    <img class="w-28 h-28 rounded-full mb-4 object-cover border-2 border-#aaa" 
+         src="images\2024\adityat.jpg" 
+         alt="Photo of Rohan Sharma"/>
+    <p class="text-white text-lg font-bold leading-tight">Aditya Telang</p>
+    <p class="text-primary text-sm font-medium">AI-ML</p>
+    <p class="text-white/70 text-xs mt-2">Avionics</p>
+    
+    <!-- Social Links - will appear on hover -->
+    <div class="flex gap-3 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <a href="www.linkedin.com/in/aditya-telang-225a3a2a9" target="_blank" rel="noopener noreferrer" 
+           class="text-white/70 hover:text-primary transition-colors" title="LinkedIn">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+            </svg>
+        </a>
+        <a href="https://github.com/Aditelang" target="_blank" rel="noopener noreferrer" 
+           class="text-white/70 hover:text-primary transition-colors" title="GitHub">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+        </a>
+    </div>
+</div>
+
+<div class="glassmorphism rounded-xl flex flex-col items-center p-6 text-center transition-all duration-300 hover:bg-white/20 group">
+    <img class="w-28 h-28 rounded-full mb-4 object-cover border-2 border-#aaa" 
+         src="images\2024\avinash.jpg" 
+         alt="Photo of Rohan Sharma"/>
+    <p class="text-white text-lg font-bold leading-tight">Avinash Nayak</p>
+    <p class="text-primary text-sm font-medium">Autonomous</p>
+    <p class="text-white/70 text-xs mt-2">Avionics</p>
+    
+    <!-- Social Links - will appear on hover -->
+    <div class="flex gap-3 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <a href="https://www.linkedin.com/in/avinashnayak16" target="_blank" rel="noopener noreferrer" 
+           class="text-white/70 hover:text-primary transition-colors" title="LinkedIn">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+            </svg>
+        </a>
+        <a href="https://www.github.com/avinashnayak16" target="_blank" rel="noopener noreferrer" 
+           class="text-white/70 hover:text-primary transition-colors" title="GitHub">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+        </a>
+    </div>
+</div>
+
+<div class="glassmorphism rounded-xl flex flex-col items-center p-6 text-center transition-all duration-300 hover:bg-white/20 group">
+    <img class="w-28 h-28 rounded-full mb-4 object-cover border-2 border-#aaa" 
+         src="images\2024\harish.jpg" 
+         alt="Photo of Rohan Sharma"/>
+    <p class="text-white text-lg font-bold leading-tight">Harish Ambore</p>
+    <p class="text-primary text-sm font-medium">Propulsion</p>
+    <p class="text-white/70 text-xs mt-2">Avionics</p>
+    
+    <!-- Social Links - will appear on hover -->
+    <div class="flex gap-3 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <a href="https://www.linkedin.com/in/harish-ambore-88418b2aa?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" rel="noopener noreferrer" 
+           class="text-white/70 hover:text-primary transition-colors" title="LinkedIn">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+            </svg>
+        </a>
+        <a href="https://share.google/JbNKheY810fMAy04o" target="_blank" rel="noopener noreferrer" 
+           class="text-white/70 hover:text-primary transition-colors" title="GitHub">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+        </a>
+    </div>
+</div>
+
+<div class="glassmorphism rounded-xl flex flex-col items-center p-6 text-center transition-all duration-300 hover:bg-white/20 group">
+    <img class="w-28 h-28 rounded-full mb-4 object-cover border-2 border-#aaa" 
+         src="images\2025\janaki.jpeg" 
+         alt="Photo of Rohan Sharma"/>
+    <p class="text-white text-lg font-bold leading-tight">M. Janaki</p>
+    <p class="text-primary text-sm font-medium">AI-ML</p>
+    <p class="text-white/70 text-xs mt-2">Avionics</p>
+    
+    <!-- Social Links - will appear on hover -->
+    <div class="flex gap-3 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <a href="https://www.linkedin.com/in/m-janaki-56a533317?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" rel="noopener noreferrer" 
+           class="text-white/70 hover:text-primary transition-colors" title="LinkedIn">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+            </svg>
+        </a>
+        <a href="https://github.com/Janaki-M438" target="_blank" rel="noopener noreferrer" 
+           class="text-white/70 hover:text-primary transition-colors" title="GitHub">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+        </a>
+    </div>
+</div>
+
+<div class="glassmorphism rounded-xl flex flex-col items-center p-6 text-center transition-all duration-300 hover:bg-white/20 group">
+    <img class="w-28 h-28 rounded-full mb-4 object-cover border-2 border-#aaa" 
+         src="images\2025\nagaraj.jpeg" 
+         alt="Photo of Rohan Sharma"/>
+    <p class="text-white text-lg font-bold leading-tight">Nagaraj Bhat</p>
+    <p class="text-primary text-sm font-medium">Design</p>
+    <p class="text-white/70 text-xs mt-2">Mechanical</p>
+    
+    <!-- Social Links - will appear on hover -->
+    <div class="flex gap-3 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <a href="https://www.linkedin.com/in/nagaraj-bhat-2690b929b?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" rel="noopener noreferrer" 
+           class="text-white/70 hover:text-primary transition-colors" title="LinkedIn">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+            </svg>
+        </a>
+        <a href="https://github.com/Nags016" target="_blank" rel="noopener noreferrer" 
+           class="text-white/70 hover:text-primary transition-colors" title="GitHub">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+        </a>
+    </div>
+</div>
+
+<div class="glassmorphism rounded-xl flex flex-col items-center p-6 text-center transition-all duration-300 hover:bg-white/20 group">
+    <img class="w-28 h-28 rounded-full mb-4 object-cover border-2 border-#aaa" 
+         src="images\2025\navneetk.jpeg" 
+         alt="Photo of Rohan Sharma"/>
+    <p class="text-white text-lg font-bold leading-tight">Navaneet Karindi</p>
+    <p class="text-primary text-sm font-medium">Propulsion</p>
+    <p class="text-white/70 text-xs mt-2">Avionics</p>
+    
+    <!-- Social Links - will appear on hover -->
+    <div class="flex gap-3 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <a href="https://www.linkedin.com/in/navaneet-r-karindi-131520374?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" rel="noopener noreferrer" 
+           class="text-white/70 hover:text-primary transition-colors" title="LinkedIn">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+            </svg>
+        </a>
+        <a href="https://github.com/Navaneet-flz" target="_blank" rel="noopener noreferrer" 
+           class="text-white/70 hover:text-primary transition-colors" title="GitHub">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+        </a>
+    </div>
+</div>
+
+<div class="glassmorphism rounded-xl flex flex-col items-center p-6 text-center transition-all duration-300 hover:bg-white/20 group">
+    <img class="w-28 h-28 rounded-full mb-4 object-cover border-2 border-#aaa" 
+         src="images\2024\nidhi.jpg" 
+         alt="Photo of Rohan Sharma"/>
+    <p class="text-white text-lg font-bold leading-tight">Nidhi Kugunavar</p>
+    <p class="text-primary text-sm font-medium">AI-ML</p>
+    <p class="text-white/70 text-xs mt-2">Avionics</p>
+    
+    <!-- Social Links - will appear on hover -->
+    <div class="flex gap-3 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <a href="https://www.linkedin.com/in/nidhi-kugunavar-b52b0632a/" target="_blank" rel="noopener noreferrer" 
+           class="text-white/70 hover:text-primary transition-colors" title="LinkedIn">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+            </svg>
+        </a>
+        <a href="https://github.com/nidhi-ii24" target="_blank" rel="noopener noreferrer" 
+           class="text-white/70 hover:text-primary transition-colors" title="GitHub">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+        </a>
+    </div>
+</div>
+
+<div class="glassmorphism rounded-xl flex flex-col items-center p-6 text-center transition-all duration-300 hover:bg-white/20 group">
+    <img class="w-28 h-28 rounded-full mb-4 object-cover border-2 border-#aaa" 
+         src="images\2025\riteshk.jpeg" 
+         alt="Photo of Rohan Sharma"/>
+    <p class="text-white text-lg font-bold leading-tight">Ritesh Kulkarni</p>
+    <p class="text-primary text-sm font-medium">Autonomous</p>
+    <p class="text-white/70 text-xs mt-2">Avionics</p>
+    
+    <!-- Social Links - will appear on hover -->
+    <div class="flex gap-3 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <a href="www.linkedin.com/in/ritesh-kulkarni-34041b262" target="_blank" rel="noopener noreferrer" 
+           class="text-white/70 hover:text-primary transition-colors" title="LinkedIn">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+            </svg>
+        </a>
+        <a href="https://github.com/riteshrkulkarni" target="_blank" rel="noopener noreferrer" 
+           class="text-white/70 hover:text-primary transition-colors" title="GitHub">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+        </a>
+    </div>
+</div>
+
+<div class="glassmorphism rounded-xl flex flex-col items-center p-6 text-center transition-all duration-300 hover:bg-white/20 group">
+    <img class="w-28 h-28 rounded-full mb-4 object-cover border-2 border-#aaa" 
+         src="images\2024\swaroop.jpg" 
+         alt="Photo of Rohan Sharma"/>
+    <p class="text-white text-lg font-bold leading-tight">Swaroop Biradar</p>
+    <p class="text-primary text-sm font-medium">Structures</p>
+    <p class="text-white/70 text-xs mt-2">Mechanical</p>
+    
+    <!-- Social Links - will appear on hover -->
+    <div class="flex gap-3 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <a href="https://www.linkedin.com/in/swaroop-biradar-790a152b1?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" rel="noopener noreferrer" 
+           class="text-white/70 hover:text-primary transition-colors" title="LinkedIn">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+            </svg>
+        </a>
+        <a href="" target="_blank" rel="noopener noreferrer" 
+           class="text-white/70 hover:text-primary transition-colors" title="GitHub">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+        </a>
+    </div>
+</div>
+
+<div class="glassmorphism rounded-xl flex flex-col items-center p-6 text-center transition-all duration-300 hover:bg-white/20 group">
+    <img class="w-28 h-28 rounded-full mb-4 object-cover border-2 border-#aaa" 
+         src="images\2025\vijay.jpeg" 
+         alt="Photo of Rohan Sharma"/>
+    <p class="text-white text-lg font-bold leading-tight">Vijay Chipati</p>
+    <p class="text-primary text-sm font-medium">Design</p>
+    <p class="text-white/70 text-xs mt-2">Mechanical</p>
+    
+    <!-- Social Links - will appear on hover -->
+    <div class="flex gap-3 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <a href="https://www.linkedin.com/in/vijay-chipati-186316212?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" rel="noopener noreferrer" 
+           class="text-white/70 hover:text-primary transition-colors" title="LinkedIn">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+            </svg>
+        </a>
+        <a href="" target="_blank" rel="noopener noreferrer" 
+           class="text-white/70 hover:text-primary transition-colors" title="GitHub">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+        </a>
+    </div>
+</div>
+
+<div class="glassmorphism rounded-xl flex flex-col items-center p-6 text-center transition-all duration-300 hover:bg-white/20 group">
+    <img class="w-28 h-28 rounded-full mb-4 object-cover border-2 border-#aaa" 
+         src="images\2024\vinayvm.jpeg" 
+         alt="Photo of Rohan Sharma"/>
+    <p class="text-white text-lg font-bold leading-tight">Vinay Matade</p>
+    <p class="text-primary text-sm font-medium">Simulation</p>
+    <p class="text-white/70 text-xs mt-2">Avionics</p>
+    
+    <!-- Social Links - will appear on hover -->
+    <div class="flex gap-3 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <a href="https://www.linkedin.com/in/vinaymatade/" target="_blank" rel="noopener noreferrer" 
+           class="text-white/70 hover:text-primary transition-colors" title="LinkedIn">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+            </svg>
+        </a>
+        <a href="https://github.com/VinayMatade" target="_blank" rel="noopener noreferrer" 
+           class="text-white/70 hover:text-primary transition-colors" title="GitHub">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+        </a>
+    </div>
+</div>
+
+<div class="glassmorphism rounded-xl flex flex-col items-center p-6 text-center transition-all duration-300 hover:bg-white/20 group">
+    <img class="w-28 h-28 rounded-full mb-4 object-cover border-2 border-#aaa" 
+         src="images\2024\vishwanath.jpg" 
+         alt="Photo of Rohan Sharma"/>
+    <p class="text-white text-lg font-bold leading-tight">Vishwanath Jirli</p>
+    <p class="text-primary text-sm font-medium">Analysis</p>
+    <p class="text-white/70 text-xs mt-2">Mechanical</p>
+    
+    <!-- Social Links - will appear on hover -->
+    <div class="flex gap-3 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <a href="https://www.linkedin.com/in/vishwanath-b-jirli-44a81433a" target="_blank" rel="noopener noreferrer" 
+           class="text-white/70 hover:text-primary transition-colors" title="LinkedIn">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+            </svg>
+        </a>
+        <a href="https://github.com/VISHWANATHBJIRLI" target="_blank" rel="noopener noreferrer" 
+           class="text-white/70 hover:text-primary transition-colors" title="GitHub">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+        </a>
+    </div>
+</div>
+        </div>
+    </div>
+</section>
+
+<section class="text-center p-16">
+<h2 class="text-white text-[28px] font-bold leading-tight tracking-[-0.015em] pb-4">Our Mission</h2>
+<p class="text-white/80 max-w-3xl mx-auto leading-relaxed"> To foster a culture of innovation and collaboration, pushing the boundaries of aerospace technology. We empower students to transform theoretical knowledge into practical solutions, creating autonomous systems that will shape the future of aviation. </p>
+</section>
+
+<section class="content-section">
+    <div class="section-wrapper">
+        <div class="section-header">
+            <h2 class="section-title">From the House of aeroKLE</h2>
+            <p class="section-subtitle">From prototypes to production-ready systems</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Your existing project cards -->
+<div class="bg-cover bg-center flex flex-col gap-3 rounded-xl justify-end p-16 aspect-[4/3] group overflow-hidden" data-alt="An early prototype drone with exposed wiring." style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 100%), url("images/projects/trakshya.jpg");'>
+<div class="transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out">
+<p class="text-white text-lg font-bold leading-tight">Trkshya (Aerothon 2024)</p>
+<p class="text-white/80 text-sm">Has an aerodynamic profile that minipromizes drag, while advanced thermal management systems enhance efficiency under demanding conditions</p>
+</div>
+</div>
+<div class="bg-cover bg-center flex flex-col gap-3 rounded-xl justify-end p-16 aspect-[4/3] group overflow-hidden" data-alt="A fixed-wing aircraft model on a runway." style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 100%), url("images/projects/addc 2.0.jpg");'>
+<div class="transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out">
+<p class="text-white text-lg font-bold leading-tight">ADDC 2.0 (ADDC 2024)</p>
+<p class="text-white/80 text-sm">delivered breakthrough improvements in maneuverability, stability, and payload delivery, enabling seamless performance even in complex missions.</p>
+</div>
+</div>
+<div class="bg-cover bg-center flex flex-col gap-3 rounded-xl justify-end p-16 aspect-[4/3] group overflow-hidden" data-alt="A sleek, modern drone with a white body." style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 100%), url("images/projects/vayu 2.0.jpg");'>
+<div class="transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out">
+<p class="text-white text-lg font-bold leading-tight">Vayu 2.0 (AeroTHON 2023)</p>
+<p class="text-white/80 text-sm">Vayu 2.0 advanced innovation with a robust, aerodynamically refined design and integrated thermal management, ensuring reliable performance in dynamic, challenging missions.
+</p>
+</div>
+</div>
+
+<div class="bg-cover bg-center flex flex-col gap-3 rounded-xl justify-end p-16 aspect-[4/3] group overflow-hidden" data-alt="A sleek, modern drone with a white body." style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 100%), url("images/projects/addc 1.0.jpg");'>
+<div class="transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out">
+<p class="text-white text-lg font-bold leading-tight">ADDC 1.0 (ADDC 2023)</p>
+<p class="text-white/80 text-sm">It demonstrates strong structural resilience and precise fragile payload delivery, offering durable, efficient performance across diverse missions.</p>
+</p>
+</div>
+</div>
+
+<div class="bg-cover bg-center flex flex-col gap-3 rounded-xl justify-end p-16 aspect-[4/3] group overflow-hidden" data-alt="A sleek, modern drone with a white body." style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 100%), url("images/projects/vayu 1.0.jpg");'>
+<div class="transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out">
+<p class="text-white text-lg font-bold leading-tight">Vayu 1.0 (AeroTHON 2022)</p>
+<p class="text-white/80 text-sm">Aerothon 2022, the team’s first drone, established a legacy of innovation with a robust, aerodynamic, and thermally optimized design for reliable autonomous missions.</p>
+</p>
+</div>
+</div>
+
+<div class="bg-cover bg-center flex flex-col gap-3 rounded-xl justify-end p-16 aspect-[4/3] group overflow-hidden" data-alt="A sleek, modern drone with a white body." style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 100%), url("images/projects/vayu.jpg");'>
+<div class="transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out">
+<p class="text-white text-lg font-bold leading-tight">Vayu (DDC-Regular 2022)</p>
+<p class="text-white/80 text-sm">This advanced dual-boom aircraft features a zero-drag fuselage and optimized stability to deliver the highest payload capacity yet, embodying innovation and championship-level performance.</p>
+</p>
+</div>
+</div>
+
+<div class="bg-cover bg-center flex flex-col gap-3 rounded-xl justify-end p-16 aspect-[4/3] group overflow-hidden" data-alt="A sleek, modern drone with a white body." style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 100%), url("images/projects/aero21.jpg");'>
+<div class="transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out">
+<p class="text-white text-lg font-bold leading-tight">AeroTHON 2021</p>
+<p class="text-white/80 text-sm">This uniquely engineered, morphing-wing aircraft—powered by a 64 cc EFI engine—delivers 7 hp, 200 km/h cruise speeds, 28 kg payload capacity, and 6000 m altitude capability, making it a superior solution for reconnaissance, surveillance, payload drop, and cargo missions.</p>
+</p>
+</div>
+</div>
+
+<div class="bg-cover bg-center flex flex-col gap-3 rounded-xl justify-end p-16 aspect-[4/3] group overflow-hidden" data-alt="A sleek, modern drone with a white body." style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 100%), url("images/projects/jatayu.jpg");'>
+<div class="transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out">
+<p class="text-white text-lg font-bold leading-tight">Jatayu (DDC-Regular 2021)</p>
+<p class="text-white/80 text-sm">This redesigned, triple-tail Jatayu aircraft with tapered wings and a stronger fuselage delivered higher payload capacity and secured the team’s second championship victory.</p>
+</p>
+</div>
+</div>
+
+<div class="bg-cover bg-center flex flex-col gap-3 rounded-xl justify-end p-16 aspect-[4/3] group overflow-hidden" data-alt="A sleek, modern drone with a white body." style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 100%), url("images/projects/atom.jpg");'>
+<div class="transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out">
+<p class="text-white text-lg font-bold leading-tight">ATOM (DDC-Micro 2020)</p>
+<p class="text-white/80 text-sm">This lightweight aircraft with a rectangular split-wing design carried payloads many times its weight—an impressive 2 kg—earning the title “The Unsung Hero.”</p>
+</p>
+</div>
+</div>
+
+<div class="bg-cover bg-center flex flex-col gap-3 rounded-xl justify-end p-16 aspect-[4/3] group overflow-hidden" data-alt="A sleek, modern drone with a white body." style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 100%), url("./images/projects/varthaman\ 2.0.jpg");'>
+<div class="transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out">
+<p class="text-white text-lg font-bold leading-tight">Varthaman 2.0 (DDC-Regular 2019)</p>
+<p class="text-white/80 text-sm">This innovative, lightweight, and strengthened prototype carried 5 kg payloads and soared to secure the SAE INDIA 2018–2019 championship.</p>
+</p>
+</div>
+</div>
+
+<div class="bg-cover bg-center flex flex-col gap-3 rounded-xl justify-end p-16 aspect-[4/3] group overflow-hidden" data-alt="A sleek, modern drone with a white body." style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 100%), url("./images/projects/varthaman\ 1.0.jpg");'>
+<div class="transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out">
+<p class="text-white text-lg font-bold leading-tight">Varthaman 1.0 (DDC-Micro 2019)</p>
+<p class="text-white/80 text-sm">This highly stable polyhedral, out-tapered wing aircraft with a wood spar and conventional tail carried 1.5 kg payload, earning 3rd place in the SAE Aerodesign Challenge 2018–2019.</p>
+</p>
+</div>
+</div>
+
+<div class="bg-cover bg-center flex flex-col gap-3 rounded-xl justify-end p-16 aspect-[4/3] group overflow-hidden" data-alt="A sleek, modern drone with a white body." style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 100%), url("./images/projects/dyaus.jpg");'>
+<div class="transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out">
+<p class="text-white text-lg font-bold leading-tight">Dyaus (DDC-regular 2018)</p>
+<p class="text-white/80 text-sm">This T-tail, rectangular-wing prototype with a former-built fuselage lifted 2.5 kg payload, securing 8th place in the SAE INDIA Aerodesign Challenge 2017–2018.</p>
+</p>
+</div>
+</div>
+        </div>
+    </div>
+</section>
+
+<!-- Gallery Section -->
+<section class="content-section" id="gallery">
+    <div class="section-wrapper">
+        <div class="section-header">
+            <h2 class="section-title">Our Gallery</h2>
+            <p class="section-subtitle">Visual highlights from our journey of innovation</p>
+        </div>
+        <div id="masonry-gallery" class="masonry-container"></div>
+    </div>
+</section>
+
+
+<!-- Connect Section -->
+<section class="content-section text-center">
+    <div class="section-wrapper">
+        <div class="section-header">
+            <h2 class="section-title">Connect With Us</h2>
+            <p class="section-subtitle">Get in touch through your preferred platform</p>
+        </div>
+        <div class="flex justify-center items-center gap-8 flex-wrap">
+            <a class="text-white/70 hover:text-primary transition-colors flex flex-col items-center gap-2" href="mailto:aerokle@kletech.ac.in">
+                <span class="material-symbols-outlined text-5xl">mail</span>
+                <span class="text-sm">Email</span>
+            </a>
+            <a class="text-white/70 hover:text-primary transition-colors flex flex-col items-center gap-2" href="https://www.linkedin.com/company/aerokle/">
+                <svg aria-hidden="true" class="h-12 w-12 fill-current" viewBox="0 0 24 24">
+                    <path clip-rule="evenodd" d="M16.338 16.338H13.67V12.16c0-.995-.017-2.277-1.387-2.277-1.39 0-1.601 1.086-1.601 2.207v4.248H8.014v-8.59h2.559v1.174h.037c.356-.675 1.227-1.387 2.526-1.387 2.703 0 3.203 1.778 3.203 4.092v4.711zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 114.128 0c0 1.14-.931 2.065-2.065 2.065zm1.337 8.905H4.002v-8.59h2.672v8.59zM17.668 2H6.329A4.334 4.334 0 002 6.332v11.336A4.334 4.334 0 006.329 22h11.339A4.334 4.334 0 0022 17.668V6.332A4.334 4.334 0 0017.668 2z" fill-rule="evenodd"/>
+                </svg>
+                <span class="text-sm">LinkedIn</span>
+            </a>
+            <a class="text-white/70 hover:text-primary transition-colors flex flex-col items-center gap-2" href="https://github.com/aerokle">
+                <svg aria-hidden="true" class="h-12 w-12 fill-current" viewBox="0 0 24 24">
+                    <path clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.165 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.031-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.03 1.595 1.03 2.688 0 3.848-2.338 4.695-4.566 4.942.359.308.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.001 10.001 0 0022 12c0-5.523-4.477-10-10-10z" fill-rule="evenodd"/>
+                </svg>
+                <span class="text-sm">GitHub</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Form Section -->
+<section class="content-section">
+    <div class="section-wrapper">
+        <div class="section-header">
+            <h2 class="section-title">Get in Touch</h2>
+            <p class="section-subtitle">Have a question or want to collaborate? We'd love to hear from you!</p>
+        </div>
+        
+        <div class="contact-form-container">
+            <form class="contact-form" id="contactForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">
+                            <span class="material-symbols-outlined">person</span>
+                            Full Name
+                        </label>
+                        <input 
+                            type="text" 
+                            id="name" 
+                            name="name" 
+                            placeholder="John Doe" 
+                            required
+                        />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">
+                            <span class="material-symbols-outlined">mail</span>
+                            Email Address
+                        </label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            placeholder="john@example.com" 
+                            required
+                        />
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="subject">
+                        <span class="material-symbols-outlined">subject</span>
+                        Subject
+                    </label>
+                    <input 
+                        type="text" 
+                        id="subject" 
+                        name="subject" 
+                        placeholder="What's this about?" 
+                        required
+                    />
+                </div>
+                
+                <div class="form-group">
+                    <label for="message">
+                        <span class="material-symbols-outlined">chat</span>
+                        Message
+                    </label>
+                    <textarea 
+                        id="message" 
+                        name="message" 
+                        rows="6" 
+                        placeholder="Tell us more..." 
+                        required
+                    ></textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn">
+                    <span>Send Message</span>
+                    <span class="material-symbols-outlined">send</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+
+</main>
+<footer class="border-t border-solid border-b-[#283039] px-10 py-6 text-center text-white/50 text-sm"> © 2025 aeroKLE, KLE Technological University. All Rights Reserved. </footer>
+</div>
+</div>
+</div>
+</div>
+<!-- ===== Floating Dock Bar ===== -->
+<div class="dock-outer">
+  <div class="dock-panel">
+    <!-- Home -->
+    <a href="./index.html" class="dock-item">
+      <div class="dock-icon"><span class="material-symbols-outlined">home</span></div>
+      <div class="dock-label">Home</div>
+    </a>
+    
+    <!-- Pitch -->
+    <a href="./pitch.html" class="dock-item">
+      <div class="dock-icon"><span class="material-symbols-outlined">airplanemode_active</span></div>
+      <div class="dock-label">Pitch</div>
+    </a>
+    
+    <!-- Software -->
+    <a href="./dashboard.html" class="dock-item">
+      <div class="dock-icon"><span class="material-symbols-outlined">code</span></div>
+      <div class="dock-label">Software</div>
+    </a>
+    
+    <!-- Flight Operations -->
+    <a href="./operations.html" class="dock-item">
+      <div class="dock-icon"><span class="material-symbols-outlined">flight_takeoff</span></div>
+      <div class="dock-label">Flight Operations</div>
+    </a>
+    
+    <!-- Technical -->
+    <a href="./technical.html" class="dock-item">
+      <div class="dock-icon"><span class="material-symbols-outlined">engineering</span></div>
+      <div class="dock-label">Technical</div>
+    </a>
+    
+    <!-- About Us -->
+    <a href="./aboutus.html" class="dock-item">
+      <div class="dock-icon"><span class="material-symbols-outlined">groups</span></div>
+      <div class="dock-label">About Us</div>
+    </a>
+  </div>
+</div>
+<script>
+function scrollToSection(id) {
+  const el = document.getElementById(id);
+  if (el) {
+    window.scrollTo({ top: el.offsetTop - 60, behavior: 'smooth' });
+  }
+}
+</script>
+<script>
+// Gallery Items Data
+const galleryItems = [
+    {
+        id: "1",
+        img: "./images/gallery/1.jpg",
+    },
+    {
+        id: "2",
+        img: "./images/gallery/2.jpg",
+    },
+    {
+        id: "3",
+        img: "./images/gallery/3.jpeg",
+    },
+    {
+        id: "4",
+        img: "./images/gallery/4.jpg",
+    },
+    {
+        id: "5",
+        img: "./images/gallery/5.jpg",
+    },
+    {
+        id: "6",
+        img: "./images/gallery/6.jpg",
+    },
+    {
+        id: "7",
+        img: "./images/gallery/7.jpg",
+    },
+    {
+        id: "8",
+        img: "./images/gallery/8.jpg",
+    },
+    {
+        id: "9",
+        img: "./images/gallery/9.jpeg",
+    },
+    {
+        id: "10",
+        img: "./images/gallery/10.jpg",
+    },
+    {
+        id: "11",
+        img: "./images/gallery/11.jpeg",
+    },
+    {
+        id: "12",
+        img: "./images/gallery/12.jpeg",
+    },
+    {
+        id: "13",
+        img: "./images/gallery/13.jpeg",
+    },
+    {
+        id: "14",
+        img: "./images/gallery/14.jpeg",
+    },
+    {
+        id: "15",
+        img: "./images/gallery/15.jpeg",
+    },
+    {
+        id: "16",
+        img: "./images/gallery/16.jpeg",
+    },
+    {
+        id: "17",
+        img: "./images/gallery/17.jpeg",
+    },
+    {
+        id: "18",
+        img: "./images/gallery/18.jpeg",
+    },
+    {
+        id: "19",
+        img: "./images/gallery/19.jpg",
+    },
+    {
+        id: "20",
+        img: "./images/gallery/20.jpeg",
+    },
+    {
+        id: "21",
+        img: "./images/gallery/21.jpg",
+    },
+    {
+        id: "22",
+        img: "./images/gallery/22.jpeg",
+    },
+    {
+        id: "23",
+        img: "./images/gallery/23.jpg",
+    },
+    {
+        id: "24",
+        img: "./images/gallery/24.jpeg",
+    },
+    {
+        id: "25",
+        img: "./images/gallery/25.jpeg",
+    },
+    {
+        id: "26",
+        img: "./images/gallery/26.jpg",
+    },
+    {
+        id: "27",
+        img: "./images/gallery/27.jpg",
+    },
+    {
+        id: "28",
+        img: "./images/gallery/28.jpeg",
+    },
+    {
+        id: "29",
+        img: "./images/gallery/29.jpg",
+    },
+    {
+        id: "30",
+        img: "./images/gallery/30.jpeg",
+    },
+    {
+        id: "31",
+        img: "./images/gallery/31.jpg",
+    },
+    {
+        id: "32",
+        img: "./images/gallery/32.jpeg",
+    },
+    {
+        id: "33",
+        img: "./images/gallery/33.jpeg",    
+    },
+    {
+        id: "34",
+        img: "./images/gallery/34.jpeg",    
+    },
+    {
+        id: "35",
+        img: "./images/gallery/35.jpg",    
+    }
+];
+
+// Masonry Gallery Implementation
+class MasonryGallery {
+    constructor(containerId, items, options = {}) {
+        this.container = document.getElementById(containerId);
+        this.items = items;
+        this.options = {
+            ease: options.ease || 'power3.out',
+            duration: options.duration || 0.6,
+            stagger: options.stagger || 0.05,
+            animateFrom: options.animateFrom || 'bottom',
+            scaleOnHover: options.scaleOnHover !== false,
+            hoverScale: options.hoverScale || 0.95,
+            blurToFocus: options.blurToFocus !== false,
+            ...options
+        };
+        
+        this.grid = [];
+        this.hasMounted = false;
+        
+        this.init();
+    }
+    
+    getColumns() {
+        const width = window.innerWidth;
+        if (width >= 1500) return 5;
+        if (width >= 1000) return 4;
+        if (width >= 600) return 3;
+        if (width >= 400) return 2;
+        return 1;
+    }
+    
+    async preloadImages() {
+        const promises = this.items.map(item => {
+            return new Promise(resolve => {
+                const img = new Image();
+                img.src = item.img;
+                img.onload = img.onerror = () => resolve();
+            });
+        });
+        await Promise.all(promises);
+    }
+    
+async calculateGrid() {
+    const columns = this.getColumns();
+    const containerWidth = this.container.offsetWidth;
+    const gap = 16;
+    const columnWidth = containerWidth / columns;
+    const colHeights = new Array(columns).fill(0);
+    
+    // Load all images to get their natural dimensions
+    const imagePromises = this.items.map(item => {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => {
+                // Calculate height based on actual image aspect ratio
+                const aspectRatio = img.naturalHeight / img.naturalWidth;
+                const calculatedHeight = columnWidth * aspectRatio;
+                resolve({
+                    ...item,
+                    calculatedHeight: calculatedHeight
+                });
+            };
+            img.onerror = () => {
+                // Fallback to item.height if image fails to load
+                resolve({
+                    ...item,
+                    calculatedHeight: item.height / 2
+                });
+            };
+            img.src = item.img;
+        });
+    });
+    
+    const itemsWithDimensions = await Promise.all(imagePromises);
+    
+    this.grid = itemsWithDimensions.map(item => {
+        const col = colHeights.indexOf(Math.min(...colHeights));
+        const x = columnWidth * col;
+        const height = item.calculatedHeight;
+        const y = colHeights[col];
+        
+        colHeights[col] += height;
+        
+        return {
+            ...item,
+            x,
+            y,
+            w: columnWidth,
+            h: height
+        };
+    });
+    
+    // Set container height
+    this.container.style.height = `${Math.max(...colHeights)}px`;
+}
+
+    
+    getInitialPosition(item) {
+        const direction = this.options.animateFrom;
+        const containerRect = this.container.getBoundingClientRect();
+        
+        switch (direction) {
+            case 'top':
+                return { x: item.x, y: -200 };
+            case 'bottom':
+                return { x: item.x, y: window.innerHeight + 200 };
+            case 'left':
+                return { x: -200, y: item.y };
+            case 'right':
+                return { x: window.innerWidth + 200, y: item.y };
+            case 'center':
+                return {
+                    x: containerRect.width / 2 - item.w / 2,
+                    y: containerRect.height / 2 - item.h / 2
+                };
+            default:
+                return { x: item.x, y: item.y + 100 };
+        }
+    }
+    
+    createElements() {
+        this.container.innerHTML = '';
+        
+        this.grid.forEach(item => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'masonry-item';
+            wrapper.setAttribute('data-key', item.id);
+            wrapper.style.position = 'absolute';
+            
+            const imgDiv = document.createElement('div');
+            imgDiv.className = 'masonry-item-img';
+            imgDiv.style.backgroundImage = `url(${item.img})`;
+            
+            wrapper.appendChild(imgDiv);
+            this.container.appendChild(wrapper);
+            
+            // Add hover events
+            wrapper.addEventListener('mouseenter', () => this.handleHover(item, true));
+            wrapper.addEventListener('mouseleave', () => this.handleHover(item, false));
+        });
+    }
+    
+    animateItems() {
+        this.grid.forEach((item, index) => {
+            const selector = `[data-key="${item.id}"]`;
+            const animationProps = {
+                x: item.x,
+                y: item.y,
+                width: item.w,
+                height: item.h
+            };
+            
+            if (!this.hasMounted) {
+                const initialPos = this.getInitialPosition(item);
+                const initialState = {
+                    opacity: 0,
+                    x: initialPos.x,
+                    y: initialPos.y,
+                    width: item.w,
+                    height: item.h
+                };
+                
+                if (this.options.blurToFocus) {
+                    initialState.filter = 'blur(10px)';
+                }
+                
+                gsap.fromTo(selector, initialState, {
+                    opacity: 1,
+                    ...animationProps,
+                    filter: this.options.blurToFocus ? 'blur(0px)' : 'none',
+                    duration: 0.8,
+                    ease: 'power3.out',
+                    delay: index * this.options.stagger
+                });
+            } else {
+                gsap.to(selector, {
+                    ...animationProps,
+                    duration: this.options.duration,
+                    ease: this.options.ease,
+                    overwrite: 'auto'
+                });
+            }
+        });
+        
+        this.hasMounted = true;
+    }
+    
+    handleHover(item, isEntering) {
+        const selector = `[data-key="${item.id}"]`;
+        
+        if (this.options.scaleOnHover) {
+            gsap.to(selector, {
+                scale: isEntering ? this.options.hoverScale : 1,
+                duration: 0.3,
+                ease: 'power2.out'
+            });
+        }
+    }
+    
+    async init() {
+    this.container.classList.add('loading');
+    await this.preloadImages();
+    this.container.classList.remove('loading');
+    
+    await this.calculateGrid(); // Now async
+    this.createElements();
+    this.animateItems();
+    
+    // Handle resize
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(async () => {
+            await this.calculateGrid();
+            this.animateItems();
+        }, 250);
+    });
+}
+
+}
+
+// Initialize Masonry Gallery when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('masonry-gallery')) {
+        new MasonryGallery('masonry-gallery', galleryItems, {
+            ease: 'power3.out',
+            duration: 0.6,
+            stagger: 0.05,
+            animateFrom: 'bottom',
+            scaleOnHover: true,
+            hoverScale: 0.95,
+            blurToFocus: true
+        });
+    }
+});
+</script>
+
+<!-- ===== GSAP + ScrollTrigger (CDN) ===== -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<!-- ===== Shuffle CSS ===== -->
+<style>
+  /* ensure headings are hidden until we prepare them */
+  .shuffle-parent { display:inline-block; visibility:hidden; line-height:1; }
+  .shuffle-char {
+    display:inline-block;
+    white-space:pre;
+    opacity:0;
+    transform: translateY(20px) rotateZ(0deg) scale(0.98);
+    will-change: transform, opacity;
+  }
+  /* optional: slightly different style for tagline */
+  #shuffle-tagline .shuffle-char { font-weight:600; font-size:1.0em; }
+</style>
+
+<!-- ===== Shuffle JS (wraps text and animates) ===== -->
+<script>
+  (function () {
+    if (!window.gsap) {
+      console.error("GSAP not loaded — check CDN links.");
+      return;
+    }
+    gsap.registerPlugin(ScrollTrigger);
+
+    function wrapChars(el) {
+      if (!el) return [];
+      const text = el.textContent || "";
+      el.innerHTML = "";
+      el.classList.add("shuffle-parent");
+      const chars = [];
+      // preserve spaces as &nbsp; so width is kept
+      for (let i = 0; i < text.length; i++) {
+        const ch = text[i] === " " ? "\u00A0" : text[i];
+        const span = document.createElement("span");
+        span.className = "shuffle-char";
+        span.textContent = ch;
+        el.appendChild(span);
+        chars.push(span);
+      }
+      // mark ready (visibility will be toggled before animation)
+      return chars;
+    }
+
+    function createShuffleAnimation(el, opts = {}) {
+      const {
+        duration = 0.45,
+        stagger = 0.03,
+        direction = "up", // up or right (affects initial transform)
+        delay = 0,
+        ease = "power3.out",
+        triggerOnce = true,
+        shuffle = true, // extra short x tween to mimic shuffle
+        start = "top 80%"
+      } = opts;
+
+      const chars = wrapChars(el);
+      if (!chars.length) {
+        // nothing to animate — make visible
+        el.style.visibility = "visible";
+        return null;
+      }
+
+      // set initial transform depending on direction
+      chars.forEach((c, i) => {
+        c.style.opacity = 0;
+        if (direction === "right") {
+          c.style.transform = "translateX(20px) scale(0.98)";
+        } else {
+          c.style.transform = "translateY(20px) scale(0.98)";
+        }
+      });
+
+      el.style.visibility = "visible";
+
+      // timeline that animates in with stagger - small random "shuffle" jitter then settle
+      const tl = gsap.timeline({
+        paused: true,
+        defaults: { duration, ease }
+      });
+
+      // small random pre-shake to mimic characters rolling
+      if (shuffle) {
+        tl.to(chars, {
+          x: function() { return (Math.random() - 0.5) * 30; },
+          y: function() { return (Math.random() - 0.5) * 10; },
+          rotation: function() { return (Math.random() - 0.5) * 12; },
+          duration: duration * 0.35,
+          stagger: stagger,
+          ease: "power2.out"
+        }, 0);
+      }
+
+      // main reveal: to final position
+      tl.to(chars, {
+        x: 0,
+        y: 0,
+        rotation: 0,
+        opacity: 1,
+        scale: 1,
+        duration: duration,
+        stagger: stagger,
+      }, shuffle ? duration * 0.18 : 0);
+
+      // If using ScrollTrigger
+      const st = ScrollTrigger.create({
+        trigger: el,
+        start: start,
+        once: triggerOnce,
+        onEnter: () => {
+          tl.play();
+        }
+      });
+
+      // If element already in view on load, play immediately (ScrollTrigger may handle this, but ensure)
+      if (el.getBoundingClientRect().top < window.innerHeight) {
+        // slight delay so the page layout stabilizes
+        setTimeout(() => tl.play(), delay * 1000 || 50);
+      }
+
+      return { tl, st };
+    }
+
+    // Wait for DOMContentLoaded (if this script placed before end, it will still run)
+    document.addEventListener("DOMContentLoaded", () => {
+      try {
+        const a = document.getElementById("shuffle-kshitij");
+        const b = document.getElementById("shuffle-tagline");
+
+        if (!a && !b) {
+          console.warn("No shuffle elements found (#shuffle-kshitij or #shuffle-tagline).");
+          return;
+        }
+
+        if (a) {
+          createShuffleAnimation(a, {
+            duration: 0.5,
+            stagger: 0.04,
+            direction: "up",
+            delay: 0.0,
+            shuffle: true,
+            start: "top 85%"
+          });
+        }
+
+        if (b) {
+          createShuffleAnimation(b, {
+            duration: 0.45,
+            stagger: 0.03,
+            direction: "up",
+            delay: 0.35,
+            shuffle: false,
+            start: "top 85%"
+          });
+        }
+
+        console.log("Shuffle init: done");
+      } catch (err) {
+        console.error("Shuffle init failed:", err);
+      }
+    });
+  })();
+</script>
+
+<!-- ===== Aurora Background Canvas ===== -->
+<script type="module">
+  import { Renderer, Program, Mesh, Color, Triangle } from 'https://cdn.skypack.dev/ogl';
+
+  const VERT = `#version 300 es
+  in vec2 position;
+  void main() { gl_Position = vec4(position, 0.0, 1.0); }`;
+
+  const FRAG = `#version 300 es
+  precision highp float;
+  uniform float uTime;
+  uniform float uAmplitude;
+  uniform vec3 uColorStops[3];
+  uniform vec2 uResolution;
+  uniform float uBlend;
+  out vec4 fragColor;
+  vec3 permute(vec3 x){return mod(((x*34.0)+1.0)*x,289.0);}
+  float snoise(vec2 v){const vec4 C=vec4(0.211324865405187,0.366025403784439,-0.577350269189626,0.024390243902439);
+  vec2 i=floor(v+dot(v,C.yy));vec2 x0=v-i+dot(i,C.xx);
+  vec2 i1=(x0.x>x0.y)?vec2(1.0,0.0):vec2(0.0,1.0);
+  vec4 x12=x0.xyxy+C.xxzz;x12.xy-=i1;i=mod(i,289.0);
+  vec3 p=permute(permute(i.y+vec3(0.0,i1.y,1.0))+i.x+vec3(0.0,i1.x,1.0));
+  vec3 m=max(0.5-vec3(dot(x0,x0),dot(x12.xy,x12.xy),dot(x12.zw,x12.zw)),0.0);
+  m=m*m;m=m*m;
+  vec3 x=2.0*fract(p*C.www)-1.0;
+  vec3 h=abs(x)-0.5;vec3 ox=floor(x+0.5);
+  vec3 a0=x-ox;m*=1.79284291400159-0.85373472095314*(a0*a0+h*h);
+  vec3 g;g.x=a0.x*x0.x+h.x*x0.y;g.yz=a0.yz*x12.xz+h.yz*x12.yw;
+  return 130.0*dot(m,g);}
+  struct ColorStop{vec3 color;float position;};
+  #define COLOR_RAMP(colors,factor,finalColor){int index=0;for(int i=0;i<2;i++){ColorStop c=colors[i];bool between=c.position<=factor;index=int(mix(float(index),float(i),float(between)));}ColorStop c=colors[index];ColorStop n=colors[index+1];float range=n.position-c.position;float lerpF=(factor-c.position)/range;finalColor=mix(c.color,n.color,lerpF);}
+  void main(){
+    vec2 uv=gl_FragCoord.xy/uResolution;
+    ColorStop colors[3];
+    colors[0]=ColorStop(uColorStops[0],0.0);
+    colors[1]=ColorStop(uColorStops[1],0.5);
+    colors[2]=ColorStop(uColorStops[2],1.0);
+    vec3 rampColor;COLOR_RAMP(colors,uv.x,rampColor);
+    float height=snoise(vec2(uv.x*2.0+uTime*0.1,uTime*0.25))*0.5*uAmplitude;
+    height=exp(height);height=(uv.y*2.0-height+0.2);
+    float intensity=0.6*height;
+    float midPoint=0.20;
+    float auroraAlpha=smoothstep(midPoint-uBlend*0.5,midPoint+uBlend*0.5,intensity);
+    vec3 auroraColor=intensity*rampColor;
+    fragColor=vec4(auroraColor*auroraAlpha,auroraAlpha);
+  }`;
+
+  const canvas = document.getElementById('aurora-bg');
+  const renderer = new Renderer({ canvas, alpha: true, premultipliedAlpha: true });
+  const gl = renderer.gl;
+  gl.clearColor(0, 0, 0, 0);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+
+  const geometry = new Triangle(gl);
+  if (geometry.attributes.uv) delete geometry.attributes.uv;
+
+  const colorStopsArray = ["#3A29FF", "#EDF1F2", "#00E0FF"].map(hex => {
+    const c = new Color(hex);
+    return [c.r, c.g, c.b];
+  });
+
+  const program = new Program(gl, {
+    vertex: VERT,
+    fragment: FRAG,
+    uniforms: {
+      uTime: { value: 0 },
+      uAmplitude: { value: 1.0 },
+      uColorStops: { value: colorStopsArray },
+      uResolution: { value: [window.innerWidth, window.innerHeight] },
+      uBlend: { value: 0.5 }
+    }
+  });
+
+  const mesh = new Mesh(gl, { geometry, program });
+
+  function resize() {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    program.uniforms.uResolution.value = [window.innerWidth, window.innerHeight];
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+
+  function animate(t) {
+    requestAnimationFrame(animate);
+    program.uniforms.uTime.value = t * 0.001;
+    renderer.render({ scene: mesh });
+  }
+  animate(0);
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const slides = document.querySelectorAll(".core-slide");
+  const buttons = document.querySelectorAll("[data-slide]");
+  let index = 0;
+  const duration = 7000;
+
+  function goToSlide(i) {
+    slides.forEach((s, idx) => s.classList.toggle("active", idx === i));
+    buttons.forEach((b, idx) => b.classList.toggle("active", idx === i));
+    index = i;
+  }
+
+  buttons.forEach(b => {
+    b.addEventListener("click", () => {
+      goToSlide(parseInt(b.dataset.slide));
+      resetTimer();
+    });
+  });
+
+  let timer = setInterval(next, duration);
+  function next() {
+    goToSlide((index + 1) % slides.length);
+  }
+  function resetTimer() {
+    clearInterval(timer);
+    timer = setInterval(next, duration);
+  }
+});
+</script>
+<script>
+// Add scroll effect to logo
+window.addEventListener('scroll', function() {
+    const logo = document.querySelector('.fixed-logo');
+    if (window.scrollY > 100) {
+        logo.classList.add('scrolled');
+    } else {
+        logo.classList.remove('scrolled');
+    }
+});
+</script>
+
+<!-- Error Handling Script -->
+<script src="js/error-handling.js"></script>
+
+<!-- Accessibility Enhancements Script -->
+<script src="js/accessibility-enhancements.js"></script>
+
+</body></html>
+
