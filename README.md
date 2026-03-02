@@ -109,7 +109,7 @@ The platform is designed around recommended Tiger’s Cave evaluation themes:
   node -v
   npm -v
   ```
-- [GSAP]
+- GSAP
   ```bash
   npm install gsap
   ```
