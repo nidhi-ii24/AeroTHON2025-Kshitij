@@ -116,10 +116,13 @@ The platform is designed around recommended Tiger’s Cave evaluation themes:
 
 ### 🚀 How to Run Locally
 ```bash
-git clone https://github.com/your-username/your-repository-name.git
-cd your-repository-name
+git clone https://github.com/nidhi-ii24/AeroTHON2025-Kshitij.git
+cd AeroTHON2025-Kshitij
 ```
 Then open using Live Server in VS Code.
+
+### Live Demo
+Click on the [link] to get live demo of the working website
 
 ## 📈 Vision Behind KSHITIJ
 
