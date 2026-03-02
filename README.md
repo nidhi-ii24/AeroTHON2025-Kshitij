@@ -101,6 +101,19 @@ The platform is designed around recommended Tiger’s Cave evaluation themes:
 - Google Fonts
 - Responsive Web Design principles
 
+### ⚙️ Requirements & Setup Guide
+- Recommended extension in VSCode: ✅ Live Server (by Ritwick Dey)
+- [Node js](https://nodejs.org/)
+  Verification: 
+  ```bash
+  node -v
+  npm -v
+  ```
+- [GSAP]
+  ```bash
+  npm install gsap
+  ```
+
 ### 🚀 How to Run Locally
 ```bash
 git clone https://github.com/your-username/your-repository-name.git
